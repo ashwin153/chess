@@ -4,29 +4,34 @@ CC := g++
 # Source, build and output locations
 SRCDIR := src
 BUILDDIR := build
-TARGET := bin/chess
+BIN := bin
+TARGET := $(BIN)/chess
 
 SRCEXT := cc
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -Werror
+OBJECTS := $(patsubst $(SRCDIR)/%.$(SRCEXT),$(BUILDDIR)/%.o,$(SOURCES))
+
+CFLAGS := -std=c++11 -g -Wall -Werror
 LIB := -L lib
 INC := -I include
 
+# Linker
 $(TARGET): $(OBJECTS)
-  @echo " Linking..."
-  @echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@mkdir -p $(BIN)
+	$(CC) $^ -o $@ $(LIB)
 
+# Make object files
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-  @mkdir -p $(BUILDDIR)
-  @echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	@mkdir -p $(BUILDDIR)
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+# Clean
 clean:
-  @echo " Cleaning..."; 
-  @echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+	$(RM) -r $(BUILDDIR) $(TARGET)
 
-# Tests
-tester:
-  $(CC) $(CFLAGS) test/test.cpp $(INC) $(LIB) -o bin/test
+# Test
+test:
+	$(CC) $(CFLAGS) test/test.cpp $(INC) $(LIB) -o bin/test
 
 .PHONY: clean
