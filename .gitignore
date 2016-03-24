@@ -1,0 +1,8 @@
+# Build directory
+build
+
+# Executables
+bin/*
+
+# Operating system
+.DS_Store
