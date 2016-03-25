@@ -1,8 +1,8 @@
 # Build directory
-build
+build/
 
 # Executables
-bin/*
+bin/
 
 # Operating system
 .DS_Store
