@@ -39,11 +39,10 @@ public:
 	/*! Returns whether or not the piece is still alive. */
 	bool is_alive();
 
-	/*! Attempts to move the piece to the specified position.
+	/*! Move the piece to the specified position.
 	 * @param[in] pos Position
-	 * @return True if move was successful, false otherwise
 	 */
-	virtual bool move(const Position& pos);
+	virtual void move(const Position& pos);
 	
 	/*! Verifies that the specified position is a valid move.
      * @param[in] pos Position

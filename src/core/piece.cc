@@ -18,19 +18,13 @@ bool Piece::is_alive() {
 	return _is_alive;
 }
 
-bool Piece::move(const Position& pos) {
-	// If the position is invalid, do not move
-	if (!isValid(pos))
-		return false;
-
+void Piece::move(const Position& pos) {
 	// Move the piece to the specified position
 	_loc = pos;
 	
 	// Capture any opposing pieces
-	Piece* piece = owner().opponent()->piece(pos);
-	if (piece != nullptr) piece->_is_alive = false;
-	
-	return true;
+	Piece* enemy = owner().opponent()->piece(pos);
+	if (enemy != nullptr) enemy->_is_alive = false;
 }
 
 bool Piece::isValid(const Position& pos) {
@@ -49,8 +43,7 @@ bool Piece::isValid(const Position& pos) {
 	Piece* piece = owner().opponent()->piece(pos);
 	if (piece != nullptr) piece->_is_alive = false;
 	Position old = _loc;
-	_loc = pos;
-	
+	move(pos);
 	bool in_check = owner().in_check();
 	if (piece != nullptr) piece->_is_alive = true;
 	_loc = old;
@@ -90,7 +83,7 @@ bool Pawn::isValid(const Position& pos) {
 
 bool Knight::isValid(const Position& pos) {
 	// Knights may move to a position as long as it is within 3
-	// tiles (manhattan distance), but not within a straight line.
+	// tiles (manhattan distance), but not along a straight line.
 	return Piece::isValid(pos) && this->loc().dist(pos) <= 3 &&
 		this->loc().x != pos.x && this->loc().y != pos.y;
 }
@@ -139,13 +132,42 @@ bool Queen::isValid(const Position& pos) {
 }
 
 bool King::move(const Position& pos) {
+	// Move the rook if castling
+	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {
+		int dir = (pos.y - this.loc().y) / pos.dist(this->loc());
+		Piece* rook = owner().piece(Position(pos.x, pos.y + dir));	
+		rook->move(Position(pos.x, pos.y+dir));
+	}
+
+	// Otherwise move normally
 	return Piece::move(pos);
 }
   
 bool King::isValid(const Position& pos) {
-	// The king may castle if it and the rock have no moved,
-	// and it may not castle out of, into, or through check.
-	return Piece::isValid(pos) && pos.dist(this->loc()) == 1;
+	// The king may always move one square in any direction
+	if (Piece::isValid(pos) && pos.dist(this->loc()) == 1) return true;
+	
+	// The king may move twice to castle
+	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {
+		bool isKingSide = pos.y - this->loc().y > 0;		
+		Piece* rook = owner().piece(Position(this->loc().x, isKingSide*7));
+		Position adj = isKingSide ? Position(0, 1) : Position(0, -1);
+		
+		// The king and rook may not have moved and the king may not
+		// move out of, into, or through check.
+		if (has_moved() || rook == nullptr || rook.has_moved() ||
+			owner().in_check() || !Piece::isValid(adj) || !Piece::isValid(pos)) 
+			return false;
+
+		// Check that all adjacent squares between the king and rook are empty
+		for (int i = 1; i < rook->loc().dist(this->loc()); i++)
+			if (owner().piece(this->loc() + i*adj) != nullptr ||
+				owner().opponent()->piece(this->loc + i*adj) != nullptr)
+				return false;
+		return true;
+	}
+
+	return false;
 }
 
-}
+} // namespace chess

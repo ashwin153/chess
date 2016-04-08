@@ -56,6 +56,7 @@ bool Player::in_check() {
 	return _opponent->_king->isValid(_king->loc());
 }
 
+
 Piece* Player::piece(const Position& pos) {
 	// Search the live pieces for the position
 	for (auto piece : _pieces)
