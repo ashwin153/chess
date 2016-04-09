@@ -11,24 +11,24 @@ This project is my first large scale C++ project that attempts to incorporate va
 \item Design\+: Create a well designed object-\/oriented program.
 \end{DoxyItemize}
 
+\section*{Attribution}
+
+Default chess piece models \href{https://grabcad.com/library/complete-chess-set-1}{\tt https\+://grabcad.\+com/library/complete-\/chess-\/set-\/1} Modern chess piece models \href{https://grabcad.com/library/chess-mania-2}{\tt https\+://grabcad.\+com/library/chess-\/mania-\/2}
+
 \section*{Build (Mac O\+SX)}
 
-\subsection*{System Configuration}
+Building project requires \href{http://brew.sh/}{\tt Homebrew}.
 
-
-\begin{DoxyItemize}
-\item Compiler\+: clang-\/700.\+1.\+81
-\item Operating System\+: Mac O\+SX x86\+\_\+64 \#\# Graphics Dependencies 
+\#\# Graphics Dependencies 
 \begin{DoxyCode}
 1 brew install glfw3
 2 brew install glew
 \end{DoxyCode}
 
-\end{DoxyItemize}
 
 \subsection*{Testing Dependencies}
 
-\#\#\# Google\+Mock + Google\+Test 
+\#\#\# Google\+Mock and Google\+Test 
 \begin{DoxyCode}
 1 brew install autoconf
 2 git clone https://github.com/google/googletest.git
@@ -47,4 +47,4 @@ This project is my first large scale C++ project that attempts to incorporate va
 \end{DoxyCode}
 
 
-Move the libgmock.\+a file into the lib directory. When you build against googlemock, you are also building against googletest. Therefore, it is unnecessary to also build the googletest library. 
+Next, move the libgmock.\+a file into the lib/ directory of this project. Note that building against googlemock {\itshape also builds against googletest}. 

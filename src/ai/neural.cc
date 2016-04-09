@@ -25,14 +25,13 @@ double Neuron::eval(const std::vector<double>& in) {
 void NeuralNetwork::train(const std::vector<std::vector<double>>& in, 
 						  const std::vector<std::vector<double>>& out) {
 
-	/* Iteratively apply the inputs to the network in order
-	 * to determine the outputs at each neuron and save these
-	 * values into a forward matrix.
-	 */
+	// Iteratively apply the inputs to the network in order
+	// to determine the outputs at each neuron and save these
+	// values into a forward matrix.
 
-	/* Backpropagate errors back down the netowrk making sure
-	 * to update weights along the way.
-	 */	
+	// Backpropagate errors back down the netowrk making sure
+	// to update weights along the way.
+	
 }
 
 std::vector<double> NeuralNetwork::predict(const std::vector<double>& in) {
