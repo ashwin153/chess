@@ -4,7 +4,7 @@
 #include "model.h"
 #include <vector>
 
-namespace ai {
+namespace chess {
 
 /*! Represents a single neuron in a neural network.
  * Neurons are linear combination machines. They evaluate the linear
@@ -57,6 +57,6 @@ public:
 	std::vector<double> predict(const std::vector<double>& in);
 };
 
-} // namespace ai
+} // namespace chess
 
 #endif // AI_NEURAL_H

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace ai {
+namespace chess {
 
 /*! Generic superclass for all statistical/ML models
  * This class is parameterized by an input and output argument type.
@@ -30,6 +30,6 @@ public:
 	virtual O predict(const I& in) = 0;
 };
 
-} // namespace ai
+} // namespace chess
 
 #endif // AI_MODEL_H

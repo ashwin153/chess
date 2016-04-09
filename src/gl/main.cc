@@ -4,6 +4,7 @@
 
 // GLSL features implemented by GLM
 #include <glm/glm.hpp>
+
 // Matrix transformation functions
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -11,15 +12,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-// Verifies that GLEW operations are successful
-#define CHECK_SUCCESS(x)	\
-	if (!(x)) {				\
-		glfwTerminate();	\
-		exit(EXIT_FAILURE);	\
-	}
-
 // Define window parameters
-struct Window {
+const struct Window {
 	int width;
 	int height;
 	std::string title;
@@ -50,9 +44,9 @@ int main(int argc, char** argv) {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	GLFWwindow* glfw_window = glfwCreateWindow(window.width, window.height,
-	                                           &window.title[0], nullptr, nullptr);
-	CHECK_SUCCESS(glfw_window != nullptr);
+	GLFWwindow* glfw_window = glfwCreateWindow(
+			window.width, window.height, &window.title[0], nullptr, nullptr);
+	
 	glfwMakeContextCurrent(glfw_window);
 	glfwSetKeyCallback(glfw_window, KeyCallback);
 	glfwSetCursorPosCallback(glfw_window, CursorPosCallback);
@@ -61,7 +55,6 @@ int main(int argc, char** argv) {
 		
 	// Initialize GLEW (cross-platform extension loader)
 	glewExperimental = GL_TRUE;
-	CHECK_SUCCESS(glewInit() == GLEW_OK);
 	glGetError();
 
 	// Initialize GL constants

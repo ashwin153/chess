@@ -1,0 +1,16 @@
+#version 330 core
+#define PI 3.1415926536
+
+uniform sampler2D tunit;
+in vec4 gs_normal;
+in vec4 gs_world_position;
+in vec4 gs_light_dir;
+out vec4 fragment_color;
+
+void main() {
+	float u = CALCULATE_U;
+	float v = CALCULATE_V;	
+
+	float ndot = clamp(dot(normalize(gs_light_dir), normalize(gs_normal)), 0, 1);
+	fragment_color = clamp(ndot * texture(tunit, vec2(u, v)), 0, 1);
+}

@@ -3,7 +3,7 @@
 
 #include "chess.h"
 
-namespace ai {
+namespace chess {
 
 /*! Represents a chess engine.
  * The goal is to make this chess engine is modular as possible
@@ -18,6 +18,6 @@ public:
 	Move select(const Chess& game);
 };
 
-} // namespace ai
+} // namespace chess
 
 #endif // AI_ENGINE_H

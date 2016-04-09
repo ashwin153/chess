@@ -1,6 +1,6 @@
 #include "linear.h"
 
-namespace ai {
+namespace chess {
 
 void LinearRegression::train(const std::vector<double>& x, 
 							 const std::vector<double>& y) {
@@ -31,4 +31,4 @@ double LinearRegression::predict(const double& x) {
 	return _alpha + _beta * x;
 }
 
-} // namespace ai
+} // namespace chess

@@ -3,7 +3,7 @@
 
 #include "model.h"
 
-namespace ai {
+namespace chess {
 
 /*! Represents a linear regression model.
  * Linear regression models find the line-of-best-fit between some
@@ -26,6 +26,6 @@ public:
 	double predict(const double& in);
 };
 
-} // namespace ai
+} // namespace chess
 
 #endif // AI_LINEAR_H

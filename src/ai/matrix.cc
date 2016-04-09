@@ -1,5 +1,5 @@
 #include "matrix.h"
 
-namespace ai {
+namespace chess {
 
-} // namespace ai
+} // namespace chess

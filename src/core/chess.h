@@ -22,7 +22,6 @@ private:
 	Player* _white;
 	Player* _black;
 	std::vector<Move> _history;
-	int _turn;
 	
 public:
 	/*! Creates a default chess game with default pieces. */

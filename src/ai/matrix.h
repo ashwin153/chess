@@ -1,7 +1,7 @@
 #ifndef AI_MATRIX_H
 #define AI_MATRIX_H
 
-namespace ai {
+namespace chess {
 
 /*! Simple matrix class.
  * Performs simple calculations involving matricies. Supports
@@ -38,6 +38,6 @@ Matrix operator*(Matrix lhs, const Matrix& rhs);
 Matrix operator*(const double& lhs, Matrix rhs);
 Matrix operator*(Matrix lhs, const double& rhs);
 
-}
+} // namespace chess
 
 #endif

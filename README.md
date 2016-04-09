@@ -8,6 +8,10 @@ This project is my first large scale C++ project that attempts to incorporate va
 - Documentation: Learn how to properly document C++ code.
 - Design: Create a well designed object-oriented program.
 
+# Attribution
+Default chess piece models https://grabcad.com/library/complete-chess-set-1
+Modern chess piece models https://grabcad.com/library/chess-mania-2
+
 # Build (Mac OSX)
 Building project requires [Homebrew](http://brew.sh/).
 

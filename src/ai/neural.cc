@@ -3,7 +3,7 @@
 #include <time.h>
 #include <cmath>
 
-namespace ai {
+namespace chess {
 
 Neuron::Neuron(int ninputs) {
 	// Seed the random number generator with the current time.
@@ -39,4 +39,4 @@ std::vector<double> NeuralNetwork::predict(const std::vector<double>& in) {
 	return std::vector<double>();
 }
 
-} // namespace ai
+} // namespace chess
