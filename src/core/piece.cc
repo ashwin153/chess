@@ -11,7 +11,7 @@ Position Piece::loc() {
 }
 
 bool Piece::has_moved() {
-	return _has_moved;
+	return _loc != _org;
 }
 
 void Piece::move(const Position& pos) {
@@ -20,9 +20,14 @@ void Piece::move(const Position& pos) {
 	
 	// Capture any opposing pieces
 	owner().opponent()->capture(pos);
+}
 
-	// Mark that the piece has moved
-	_has_moved = true;
+void Piece::undo(const Position& pos) {
+	// Uncapture any opposing pieces
+	owner().opponent()->uncapture(_loc);
+	
+	// Move the piece to the specified position
+	_loc = pos;
 }
 
 bool Piece::isValid(const Position& pos) {
@@ -39,14 +44,9 @@ bool Piece::isValid(const Position& pos) {
 	// impacted pieces, move the piece, determine if in check,
 	// and then reset the original pieces.
 	Position old = _loc;
-	bool has_moved = _has_moved;	
-	
 	move(pos);
 	bool in_check = owner().in_check();
-	
-	owner().opponent()->uncapture(pos);
-	_loc = old;
-	_has_moved = has_moved;
+	undo(old);
 	return !in_check;
 }
 
@@ -133,21 +133,33 @@ bool Queen::isValid(const Position& pos) {
 
 void King::move(const Position& pos) {
 	// Move the rook if castling
-	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {
+	if (pos.dist(this->loc()) == 2) {
 		int dir = (pos.y - this->loc().y) / pos.dist(this->loc());
 		Piece* rook = owner().piece(Position(pos.x, (dir > 0) * 7));	
-		rook->move(Position(pos.x, pos.y-dir));
+		if (rook != nullptr) rook->move(pos - Position(0, dir));
 	}
 
 	// Otherwise move normally
 	Piece::move(pos);
 }
-  
+
+void King::undo(const Position& pos) {
+	// Move the rook if castling
+	if (pos.dist(this->loc()) == 2) {
+		int dir = (this->loc().y - pos.y) / pos.dist(this->loc());
+		Piece* rook = owner().piece(pos - Position(0, dir));
+		if (rook != nullptr) rook->undo(Position(pos.x, (div > 0) * 7));	
+	}
+
+	// Otherwise undo normally
+	Piece::undo(pos);
+}
+
 bool King::isValid(const Position& pos) {
 	// The king may always move one square in any direction
 	int dx = std::abs(pos.x - this->loc().x);
 	int dy = std::abs(pos.y - this->loc().y);
-	if (dx <= 1 && dy <= 1 && Piece::isValid(pos)) return true;
+	if (Piece::isValid(pos) && dx <= 1 && dy <= 1) return true;
 	
 	// The king may move twice to castle
 	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {

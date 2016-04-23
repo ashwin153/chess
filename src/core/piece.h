@@ -16,12 +16,12 @@ class Piece {
 private:
 	Player& _owner;
 	Position _loc;
-	bool _has_moved;
+	Position _org;
 
 public:
 	/*! Constructs a piece at the specified position on the board. */
 	Piece(Player& owner, Position loc) 
-		: _owner(owner), _loc(loc), _has_moved(false) {}
+		: _owner(owner), _loc(loc), _org(loc) {}
 
 	/*! All polymorphic types need a virtual destructor. */	
 	virtual ~Piece() {}
@@ -39,7 +39,12 @@ public:
 	 * @param[in] pos Position
 	 */
 	virtual void move(const Position& pos);
-	
+
+	/*! Undos a move to the specified position.
+	 * @param[in] pos Position/ 
+	 */
+	virtual void undo(const Position& pos);
+
 	/*! Verifies that the specified position is a valid move.
      * @param[in] pos Position
 	 * @return True if valid move, false otherwise
@@ -109,6 +114,7 @@ class King : public Piece {
 public:
 	King(Player& owner, Position loc) : Piece(owner, loc) {}
 	void move(const Position& pos);
+	void undo(const Position& pos);
 	bool isValid(const Position& pos);
 };
  
