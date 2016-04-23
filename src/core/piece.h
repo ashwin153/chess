@@ -17,12 +17,11 @@ private:
 	Player& _owner;
 	Position _loc;
 	bool _has_moved;
-	bool _is_alive;
 
 public:
 	/*! Constructs a piece at the specified position on the board. */
 	Piece(Player& owner, Position loc) 
-		: _owner(owner), _loc(loc), _has_moved(false), _is_alive(true) {}
+		: _owner(owner), _loc(loc), _has_moved(false) {}
 
 	/*! All polymorphic types need a virtual destructor. */	
 	virtual ~Piece() {}
@@ -35,9 +34,6 @@ public:
 
 	/*! Returns whether or not the piece has been moved. */
 	bool has_moved();
-
-	/*! Returns whether or not the piece is still alive. */
-	bool is_alive();
 
 	/*! Move the piece to the specified position.
 	 * @param[in] pos Position

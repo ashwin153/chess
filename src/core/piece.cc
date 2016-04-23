@@ -14,17 +14,12 @@ bool Piece::has_moved() {
 	return _has_moved;
 }
 
-bool Piece::is_alive() {
-	return _is_alive;
-}
-
 void Piece::move(const Position& pos) {
 	// Move the piece to the specified position
 	_loc = pos;
 	
 	// Capture any opposing pieces
-	Piece* enemy = owner().opponent()->piece(pos);
-	if (enemy != nullptr) enemy->_is_alive = false;
+	owner().opponent()->capture(pos);
 
 	// Mark that the piece has moved
 	_has_moved = true;
@@ -43,13 +38,13 @@ bool Piece::isValid(const Position& pos) {
 	// place the king in check. Save the current positions of
 	// impacted pieces, move the piece, determine if in check,
 	// and then reset the original pieces.
-	Piece* piece = owner().opponent()->piece(pos);
-	if (piece != nullptr) piece->_is_alive = false;
 	Position old = _loc;
-	bool has_moved = _has_moved;
+	bool has_moved = _has_moved;	
+	
 	move(pos);
 	bool in_check = owner().in_check();
-	if (piece != nullptr) piece->_is_alive = true;
+	
+	owner().opponent()->uncapture(pos);
 	_loc = old;
 	_has_moved = has_moved;
 	return !in_check;

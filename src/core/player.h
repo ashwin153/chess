@@ -17,7 +17,8 @@ class King;
  */
 class Player {
 private:
-	std::vector<Piece*> _pieces;
+	std::vector<Piece*> _live;
+	std::vector<Piece*> _dead;
 	Player* _opponent;
 	King* _king;
 	bool _is_white;
@@ -48,9 +49,19 @@ public:
 
 	/*! Returns the live piece at the specified position.
 	 * @param[in] pos Position
-	 * @return Point to piece or nullptr if no such piece exists.
+	 * @return Pointer to piece or nullptr if no such piece exists.
 	 */
 	virtual Piece* piece(const Position& pos);
+
+	/*! Captures any live piece at the specified location. 
+	 * @param[in] pos Position
+	 * @return Pointer to captured piece or nullptr */
+	virtual Piece* capture(const Position& pos);
+
+	/*! Uncaptures any dead piece at the specified location. 
+	 * @param[in] pos Position
+	 * @return Pointer to uncaptured piece or nullptr. */
+	virtual Piece* uncapture(const Position& pos);
 };
 
 } // namespace chess
