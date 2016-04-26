@@ -19,8 +19,8 @@ double Box::volume() const {
 
 void Box::merge(const Box& box) {
 	// If either box is empty, make the box the other box
-	if (is_empty) { *this = box; return; }
-	else if (box.is_empty) return;
+	if (volume() == 0) { *this = box; return; }
+	else if (box.volume() == 0) return;
 
 	// Find the minimum and maximum of both boxes along each axis
 	for (int axis = 0; axis < 3; axis++) {

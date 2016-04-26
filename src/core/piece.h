@@ -61,7 +61,7 @@ public:
      * @param[in] pos Position
 	 * @return True if valid move, false otherwise
 	 */
-	virtual bool is_valid(const Position& pos);
+	virtual bool valid(const Position& pos);
 
 };
 
@@ -74,7 +74,7 @@ class Pawn : public Piece {
 public:
 	Pawn(Player& owner, Position loc) : Piece(owner, loc) {}
 	void move(const Position& pos);
-	bool is_valid(const Position& pos);
+	bool valid(const Position& pos);
 	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♙" : "♟";
@@ -87,7 +87,7 @@ public:
 class Knight : public Piece {
 public:
 	Knight(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool is_valid(const Position& pos);
+	bool valid(const Position& pos);
 	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♘" : "♞";
@@ -100,7 +100,7 @@ public:
 class Bishop : virtual public Piece {
 public:
 	Bishop(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool is_valid(const Position& pos);
+	bool valid(const Position& pos);
 	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♙" : "♟";
@@ -114,7 +114,7 @@ public:
 class Rook : virtual public Piece {
 public:
 	Rook(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool is_valid(const Position& pos);
+	bool valid(const Position& pos);
 	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♖" : "♜";
@@ -130,7 +130,7 @@ class Queen : public Rook, public Bishop {
 public:
 	Queen(Player& owner, Position loc) 
 		: Piece(owner, loc), Rook(owner, loc), Bishop(owner, loc) {}
-	bool is_valid(const Position& pos);
+	bool valid(const Position& pos);
 	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♕" : "♛";
@@ -149,7 +149,7 @@ public:
 	King(Player& owner, Position loc) : Piece(owner, loc) {}
 	void move(const Position& pos);
 	void undo(const Position& pos);
-	bool is_valid(const Position& pos);
+	bool valid(const Position& pos);
 	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♔" : "♚";

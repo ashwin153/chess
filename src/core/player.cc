@@ -50,7 +50,7 @@ bool Player::in_check(const Move& move) {
 
 	// Check if any of the opponent's live pieces can move to king 
 	for (auto enemy : _opponent->_live)
-		if (enemy->is_valid(_king->loc()))
+		if (enemy->valid(_king->loc()))
 			in_check = true;
 
 	ally->undo(move.cur);

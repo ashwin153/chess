@@ -2,6 +2,7 @@
 #define PI 3.1415926536
 
 uniform sampler2D tunit;
+
 in vec4 gs_normal;
 in vec4 gs_world_position;
 in vec4 gs_light_dir;

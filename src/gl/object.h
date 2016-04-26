@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef GL_OBJECT_H
+#define GL_OBJECT_H
 
 #include <vector>
 #include <string>
@@ -38,4 +38,4 @@ struct Object {
 
 } // namespace chess
 
-#endif // OBJECT_H
+#endif // GL_OBJECT_H

@@ -20,7 +20,7 @@ void Piece::undo(const Position& pos) {
 	_loc = pos;
 }
 
-bool Piece::is_valid(const Position& pos) {
+bool Piece::valid(const Position& pos) {
 	// Verify that the position is within bounds and that
 	// the owner of this piece does not contain a piece of the
 	// same color at the specified position.
@@ -41,8 +41,8 @@ void Pawn::move(const Position& pos) {
 	}
 }
 
-bool Pawn::is_valid(const Position& pos) {
-	if (!Piece::is_valid(pos)) return false;
+bool Pawn::valid(const Position& pos) {
+	if (!Piece::valid(pos)) return false;
 
 	// White pawns move up the board, and black pawns move down.	
 	int dir = owner().is_white() ? -1 : 1;
@@ -72,19 +72,19 @@ bool Pawn::is_valid(const Position& pos) {
 	return false;
 }
 
-bool Knight::is_valid(const Position& pos) {
+bool Knight::valid(const Position& pos) {
 	// Knights may move to a position as long as it is within 3
 	// tiles (manhattan distance), but not along a straight line.
-	return Piece::is_valid(pos) && loc().dist(pos) == 3 &&
+	return Piece::valid(pos) && loc().dist(pos) == 3 &&
 		loc().x != pos.x && loc().y != pos.y;
 }
 
-bool Bishop::is_valid(const Position& pos) {
+bool Bishop::valid(const Position& pos) {
 	int dx = pos.x - loc().x;
 	int dy = pos.y - loc().y;
 	
 	// The bishop may only move diagonally
-	if (!Piece::is_valid(pos) || std::abs(dx) != std::abs(dy)) 
+	if (!Piece::valid(pos) || std::abs(dx) != std::abs(dy)) 
 		return false;
 
 	// The bishop may not pass through pieces of either color.
@@ -98,12 +98,12 @@ bool Bishop::is_valid(const Position& pos) {
 	return true;
 }
 
-bool Rook::is_valid(const Position& pos) {
+bool Rook::valid(const Position& pos) {
 	int dx = pos.x - loc().x;
 	int dy = pos.y - loc().y;
 	
 	// The rook may only move horizontally xor vertically
-	if (!Piece::is_valid(pos) || (dx != 0 && dy != 0)) 
+	if (!Piece::valid(pos) || (dx != 0 && dy != 0)) 
 		return false;
 
 	// The rook may not pass through pieces of either color. The values
@@ -120,8 +120,8 @@ bool Rook::is_valid(const Position& pos) {
 	return true;
 }
 
-bool Queen::is_valid(const Position& pos) {
-	return Rook::is_valid(pos) || Bishop::is_valid(pos);
+bool Queen::valid(const Position& pos) {
+	return Rook::valid(pos) || Bishop::valid(pos);
 }
 
 void King::move(const Position& pos) {
@@ -148,12 +148,12 @@ void King::undo(const Position& pos) {
 	Piece::undo(pos);
 }
 
-bool King::is_valid(const Position& pos) {
+bool King::valid(const Position& pos) {
 	int dx = std::abs(pos.x - loc().x);
 	int dy = std::abs(pos.y - loc().y);
 	
 	// The king may always move one square in any direction
-	if (Piece::is_valid(pos) && dx <= 1 && dy <= 1) 
+	if (Piece::valid(pos) && dx <= 1 && dy <= 1) 
 		return true;
 	
 	// The king may move twice horizontally to castle

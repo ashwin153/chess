@@ -43,7 +43,7 @@ void Game::back(int times) {
 
 bool Game::make(const Move& move) {
 	if (!next()->piece(move.cur) ||
-		!next()->piece(move.cur)->is_valid(move.nxt) ||
+		!next()->piece(move.cur)->valid(move.nxt) ||
 		next()->in_check(move))
 		return false;
 	

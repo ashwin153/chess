@@ -1,7 +1,9 @@
 #version 330 core
 uniform vec4 light_position;
+
 in vec4 vertex_position;
 in vec3 vertex_normal;
+
 out vec4 vs_light_dir;
 out vec3 vs_vertex_normal;
 

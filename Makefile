@@ -52,8 +52,8 @@ clean:
 	$(RM) -r $(BUILD) $(BIN)
 
 # Tester
-test: $(TARGET_TEST)
+test: $(OBJECTS)
 	@echo " $(TOBJ)"
-	$(CC) $(CFLAGS) $(TESTS) $(TESTOBJ) $(INC) $(LFLAG) $(TLIB) -o $(TEXE)
+	$(CC) $(CFLAGS) $(TESTS) $(TESTOBJ) $(INC) $(LFLAG) $(TLIB) -o $(TARGET_TEST)
 
 .PHONY: clean

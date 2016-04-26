@@ -5,16 +5,18 @@ layout (triangle_strip, max_verticies = 3) out;
 uniform mat4 projection;
 uniform mat4 model;
 uniform mat4 view;
+
 in vec4 vs_light_dir[];
 in vec3 vs_vertex_normal[];
+
 out vec4 gs_normal;
 out vec4 gs_light_dir;
 
 void main() {
 	for (int i = 0; i < gl_in.length(); i++) {
 		gs_light_dir = normalize(vs_light_dir[i]);
-		gs_normal = normalize(vec4(vs_vertex_normal[i], 0));
-		gl_Position = projection * view * model * gl_in[i].gl_Position;
+		gs_normal    = normalize(vec4(vs_vertex_normal[i], 0));
+		gl_Position  = projection * view * model * gl_in[i].gl_Position;
 		EmitVertex();
 	}
 
