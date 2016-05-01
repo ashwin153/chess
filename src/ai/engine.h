@@ -21,7 +21,7 @@ struct Engine {
 	 * @param[in] game Chess game
 	 * @return Optimal move
 	 */
-	Move select(const Game& game) = 0;
+	virtual Move select(const Game& game) = 0;
 
 };
 

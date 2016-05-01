@@ -39,29 +39,35 @@ public:
 	Player(Player* opponent);
 	virtual ~Player();
 
-	/*! Returns the color of the player. */
+	/*! Player Color
+	 * Returns true if the player is white and false otherwise.
+	 * @return True if white, False if black
+	 */
 	inline virtual bool is_white() const {
 		return _is_white;
 	}
 
-	/*! Returns the player's opponent. */
+	/*! Opponent
+	 * Returns the a pointer to the player's opponent.
+	 * @return Opposing player
+	 */
 	inline virtual Player* opponent() const {
 		return _opponent;
 	}
 
-	/*! Spawns a new live piece (used for promotion). */
+	/*! Spawn Piece
+	 * Spawns the specified piece. Adds it to the live list.
+	 * @param[in] piece Spawned piece
+	 */
 	inline virtual void spawn(Piece* piece) {
 		_live.push_back(piece);
 	}
 
-	/*! Returns whether or not the player is in check after move. */
-	virtual bool in_check(const Move& move);
-
-	/*! Returns the live piece at the specified position.
-	 * @param[in] pos Position
-	 * @return Pointer to piece or nullptr if no such piece exists.
+	/*! In Check
+	 * Returns true if the player is in check and false otherwise.
+	 * @return True if in check, False otherwise
 	 */
-	virtual Piece* piece(const Position& pos) const;
+	virtual bool in_check(const Move& move);
 
 	/*! Captures any live piece at the specified location. 
 	 * @param[in] pos Position
@@ -72,6 +78,26 @@ public:
 	 * @param[in] pos Position
 	 * @return Pointer to uncaptured piece or nullptr. */
 	virtual Piece* uncapture(const Position& pos);
+	
+	/*! Returns the live piece at the specified position.
+	 * @param[in] pos Position
+	 * @return Pointer to piece or nullptr if no such piece exists.
+	 */
+	virtual Piece* piece(const Position& pos) const;
+
+	/*! Pieces of Type
+	 * Returns all pieces of the specified piece type. Uses dyanmic_cast to
+	 * attempt to cast piece pointers to the specified type.
+	 * @return All live pieces of the specified type.
+	 */
+	template <typename T>
+	inline std::vector<Piece*> piece() const {
+		std::vector<Piece*> pieces;
+		for (int i = 0; i < _live.size(); i++)
+			if (dynamic_cast<T*>(_live[i]))
+				pieces.push_back(_live[i]);
+		return pieces;
+	}
 };
 
 } // namespace chess

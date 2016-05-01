@@ -1,22 +1,21 @@
-# 3D Online Chess + Chess Engine
+# 3D Chess + Chess Engine
 This project is my first large scale C++ project that attempts to incorporate various aspects from a number of my current and previous classes (graphics, algorithms, statistics, etc.). The goal is to write a robust chess application, design an OpenGL renderer, and create chess engines using various statistical and machine learning models.
 
 # TODO
 - Add unit tests for Player, Game, and pawn promotion
-- Create game engine
-- Create graphical interface
 - Use TensorFlow for AI
 
 # Goals
-- Style: Ensure that I conform to C++ best practices and make good stylistic decisions when writing the code.
-- Efficiency: Utilize efficient algorithms and rendering techniques.
-- Testability: Learn C++ testing frameworks and thoroughly test code.
-- Documentation: Learn how to properly document C++ code.
-- Design: Create a well designed object-oriented program.
+- *Style:* Ensure that I conform to C++/Python best practices and make good stylistic decisions when writing the code.
+- *Efficiency:* Utilize efficient algorithms and rendering techniques.
+- *Testability:* Learn C++ testing frameworks and thoroughly test code.
+- *Documentation:* Learn how to properly document C++ code.
+- *Design:* Create a well designed object-oriented program.
 
 # Attribution
-Default chess piece models https://grabcad.com/library/complete-chess-set-1
-Modern chess piece models https://grabcad.com/library/chess-mania-2
+- Default chess piece models [Per](https://grabcad.com/library/complete-chess-set-1)
+- Modern chess piece models [sYd_e_FeX™](https://grabcad.com/library/chess-mania-2)
+- Chess Training Data [FICS Games Database](http://ficsgames.org/)
 
 # Build (Mac OSX)
 Building project requires [Homebrew](http://brew.sh/).

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.12"/>
-<title>Chess: 3D Online Chess + Chess Engine</title>
+<title>Chess: 3D Chess + Chess Engine</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -76,20 +76,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">3D Online Chess + Chess Engine </div>  </div>
+<div class="title">3D Chess + Chess Engine </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This project is my first large scale C++ project that attempts to incorporate various aspects from a number of my current and previous classes (graphics, algorithms, statistics, etc.). The goal is to write a robust chess application, design an OpenGL renderer, and create chess engines using various statistical and machine learning models.</p>
+<h1>TODO</h1>
+<ul>
+<li>Add unit tests for Player, Game, and pawn promotion</li>
+<li>Use TensorFlow for AI</li>
+</ul>
 <h1>Goals</h1>
 <ul>
-<li>Style: Ensure that I conform to C++ best practices and make good stylistic decisions when writing the code.</li>
-<li>Efficiency: Utilize efficient algorithms and rendering techniques.</li>
-<li>Testability: Learn C++ testing frameworks and thoroughly test code.</li>
-<li>Documentation: Learn how to properly document C++ code.</li>
-<li>Design: Create a well designed object-oriented program.</li>
+<li><em>Style:</em> Ensure that I conform to C++/Python best practices and make good stylistic decisions when writing the code.</li>
+<li><em>Efficiency:</em> Utilize efficient algorithms and rendering techniques.</li>
+<li><em>Testability:</em> Learn C++ testing frameworks and thoroughly test code.</li>
+<li><em>Documentation:</em> Learn how to properly document C++ code.</li>
+<li><em>Design:</em> Create a well designed object-oriented program.</li>
 </ul>
 <h1>Attribution</h1>
-<p>Default chess piece models <a href="https://grabcad.com/library/complete-chess-set-1">https://grabcad.com/library/complete-chess-set-1</a> Modern chess piece models <a href="https://grabcad.com/library/chess-mania-2">https://grabcad.com/library/chess-mania-2</a></p>
+<ul>
+<li>Default chess piece models <a href="https://grabcad.com/library/complete-chess-set-1">Per</a></li>
+<li>Modern chess piece models <a href="https://grabcad.com/library/chess-mania-2">sYd_e_FeX™</a></li>
+<li>Chess Training Data <a href="http://ficsgames.org/">FICS Games Database</a></li>
+</ul>
 <h1>Build (Mac OSX)</h1>
 <p>Building project requires <a href="http://brew.sh/">Homebrew</a>.</p>
 <p>## Graphics Dependencies </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;brew install glfw3</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;brew install glew</div></div><!-- fragment --><h2>Testing Dependencies</h2>

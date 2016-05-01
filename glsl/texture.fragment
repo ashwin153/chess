@@ -1,0 +1,27 @@
+#version 330 core
+#define M_PI 3.1415926535
+
+uniform vec3 light_color[8];
+uniform vec3 light_atten[8];
+uniform vec3 eye;
+
+uniform sampler2D sampler;
+uniform vec3 center;
+uniform vec3 min;
+uniform vec3 max;
+
+in vec4 vs_model_pos;
+in vec4 vs_world_pos;
+in vec4 vs_light_dir;
+in vec4 vs_vertex_normal;
+
+out vec4 fragment_color;
+
+void main() {
+	float u = atan(vs_model_pos.z - center.z, vs_model_pos.x - center.x) / 2 * M_PI;
+	float v = (vs_model_pos.y - min.y) / (max.y - min.y);
+
+	vec4 to_eye = vec4(eye, 1) - vs_world_pos;	
+	float dot_nl = clamp(dot(vs_vertex_normal, vs_light_dir), 0, 1);	
+	fragment_color = clamp(dot_nl * texture(sampler, vec2(u, v)), 0, 1);
+}

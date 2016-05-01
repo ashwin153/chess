@@ -21,7 +21,7 @@ private:
 
 public:
 	/*! Constructs a piece at the specified position on the board. */
-	Piece(Player& owner, Position loc) 
+	Piece(Player& owner, const Position& loc) 
 		: _owner(owner), _loc(loc), _org(loc) {}
 
 	/*! All polymorphic types need a virtual destructor. */	
@@ -32,8 +32,13 @@ public:
 		return _owner;
 	}
 
-	/*! Returns the current location of this piece. */
-	inline Position loc() const {
+	/*! Returns location of piece
+	 * We return it by constant reference so that other objects may cache the
+	 * return value and can check up the location of the piece in the future
+	 * without maintaining a reference to the piece without being permitted to
+	 * alter the position of the piece.
+	 */
+	inline const Position& loc() {
 		return _loc;
 	}
 

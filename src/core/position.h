@@ -14,6 +14,9 @@ namespace chess {
 struct Position {
 	int x, y;
 
+	/*! By default set x and y to 0 */
+	Position() : Position(0, 0) {}
+
 	/*! Specify a position in x (row), y (col) coordinates. */
 	Position(int x, int y) : x(x), y(y) {}
 

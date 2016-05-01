@@ -1,0 +1,23 @@
+#version 330 core
+uniform vec3 light_color[8];
+uniform vec3 light_atten[8];
+uniform vec4 eye;
+
+in vec4 vs_world_pos;
+in vec4 vs_light_dir;
+in vec4 vs_vertex_normal;
+
+out vec4 fragment_color;
+
+void main() {
+	vec4 to_eye = normalize(eye - vs_world_pos);
+
+	float dot_nl = dot(vs_vertex_normal, vs_light_dir);
+	float dot_ne = dot(vs_vertex_normal, to_eye);
+	
+	float KS = pow(clamp(dot_ne, 0, 1), 16);
+	float KD = clamp(dot_nl, 0, 1);
+	
+	vec3 color = vec3(1.0f, 1.0f, 1.0f);
+	fragment_color = clamp(vec4((KD + KS) * color, 1), 0, 1);
+}

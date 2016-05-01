@@ -1,13 +1,13 @@
 # Select compiler, flags and source properties
 CC := g++
-CFLAGS := -std=c++11 -g -Wall #-Werror
+CFLAGS := -std=c++11 -g -Wall -O3 #-Werror
 LFAGS  := -L/usr/local -L lib
 SRCEXT := cc
 
 # Production: source, build, include and output locations
 SRC := src
 BIN := bin
-INC := -I include -I .
+INC := -I include -I . -I ./src/core -I ./src/gl
 LIB := -lglfw3 -lglew -framework OpenGL
 BUILD := build
 

@@ -1,0 +1,21 @@
+#version 330 core
+uniform vec4 light_coord[8];
+uniform mat4 projection;
+uniform mat4 model;
+uniform mat4 view;
+
+in vec4 vertex_position;
+in vec3 vertex_normal;
+
+out vec4 vs_model_pos;
+out vec4 vs_world_pos;
+out vec4 vs_light_dir;
+out vec4 vs_vertex_normal;
+
+void main() {
+	vs_model_pos = vertex_position;
+	vs_light_dir = normalize(light_coord[0] - vs_model_pos);
+	vs_world_pos = model * vs_model_pos;	
+	vs_vertex_normal = normalize(model * vec4(vertex_normal, 0));	
+	gl_Position = projection * view * vs_world_pos;
+}

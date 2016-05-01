@@ -1,5 +1,7 @@
 #include "game.h"
+#include <regex>
 #include <iostream>
+#include <stdexcept>
 #include <algorithm>
 
 namespace chess {
@@ -7,6 +9,22 @@ namespace chess {
 Game::Game() : _turn(0) {
 	_white = new Player(true);
 	_black = new Player(_white);	
+}
+
+Game::Game(const std::string& pgn) {
+	std::regex reg_numb("\\s*?\\d+[.]\\s+");
+	std::regex reg_move("^([PNBRQK]?)([a-h]?)([1-8]?)[x]?([a-h][1-8]).*$");
+	
+	std::sregex_token_iterator iter(pgn.begin(), pgn.end(), reg_numb, -1);
+	std::sregex_token_iterator end;
+	for ( ; iter != end; ++iter) {
+		// Deal with each move
+		std::cout << *iter << '\n';
+
+		// Special Cases: Pawn Promotion, Castling, and En Passant
+		// Throw exception for unhandled cases (Pawn Promotion to non-queen)
+		 
+	}
 }
 
 Game::Game(std::vector<Move> history) : Game() {
@@ -19,10 +37,6 @@ Game::~Game() {
 	delete _black;
 	_white = nullptr;
 	_black = nullptr;
-}
-
-Player* Game::next() const {
-	return (_turn % 2 == 0) ? _white : _black;
 }
 
 void Game::step(int times) {
