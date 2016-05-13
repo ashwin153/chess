@@ -1,89 +1,48 @@
 #include "src/core/piece.h"
+#include "src/core/move.h"
 #include "src/core/player.h"
-#include "src/core/game.h"
+
+#include "piece_mock.h"
+#include "player_mock.h"
+
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include <iostream>
 
 namespace chess {
 
-/*! Defines a mocked player.
- * GoogleMock provides a simple interface for constructing
- * mock objects. Mock objects allow you to test the interface
- * and not the implementation of dependent classes. For example,
- * much of the piece implementation relies upon the player
- * implementation of the "piece" method to determine where it is
- * relative to the other pieces on the board.
- */
-class MockPlayer : public Player {
-public:
-	MockPlayer() {}
-	MOCK_CONST_METHOD0(is_white, bool());
-	MOCK_METHOD1(in_check, bool(const Move& move));
-	MOCK_CONST_METHOD0(opponent, Player*());
-	MOCK_CONST_METHOD1(piece, Piece*(const Position& pos));
-	MOCK_METHOD1(capture, Piece*(const Position& pos));
-	MOCK_METHOD1(uncapture, Piece*(const Position& pos));
-};
-
-/*! Base fixture for all tests using a mocked player. 
- * Defines a mocked white and black player to provide
- * a simple interface way of accessing the player interface
- * without exposing the player implementation.
+/*! Base Test Fixture 
+ * Defines a mocked white and black player to provide a simple interface for
+ * accessing the player interface without exposing the player implementation.
  *
- * Test fixtures are a feature of GoogleTest that allows
- * common data configuration  in multiple tests to be 
- * abstracted away. Test fixtures contain a constructor
- * and destructor that are run once and a SetUp and TearDown
- * method that are run before and after each test respectively.
- * Test fixture tests must be prefixed by TEST_F.
+ * Test fixtures are a feature of GoogleTest that allows common data configs
+ * across multiple tests to be abstracted away. Test fixtures contain a
+ * constructor and destructor that are run once and a SetUp and TearDown
+ * method that are run before and after each test respectively. Note: test
+ * fixtures must be prefixed by TEST_F.
  */
 class PieceTest : public testing::Test {
 protected:
-	testing::NiceMock<MockPlayer>* white;
-	testing::NiceMock<MockPlayer>* black;
+	testing::NiceMock<PlayerMock>* white;
+	testing::NiceMock<PlayerMock>* black;
 
 public:
 	virtual void SetUp() {
 		// Create the mocked players
-		white = new testing::NiceMock<MockPlayer>();
-		black = new testing::NiceMock<MockPlayer>();
+		white = new testing::NiceMock<PlayerMock>();
+		black = new testing::NiceMock<PlayerMock>();
 
 		// Setup the colors of the players
-		EXPECT_CALL(*white, is_white())
-			.WillRepeatedly(testing::Return(true));
-		EXPECT_CALL(*black, is_white())
-			.WillRepeatedly(testing::Return(false));	
+		ON_CALL(*white, is_white())
+			.WillByDefault(testing::Return(true));
+		ON_CALL(*black, is_white())
+			.WillByDefault(testing::Return(false));	
 
 		// Setup the opponent relationships between players
-		EXPECT_CALL(*white, opponent())
-			.WillRepeatedly(testing::Return(black));
-		EXPECT_CALL(*black, opponent())
-			.WillRepeatedly(testing::Return(white));
-	
-		// Set the player to not be in check
-		EXPECT_CALL(*white, in_check(testing::_))
-			.WillRepeatedly(testing::Return(false));
-		EXPECT_CALL(*black, in_check(testing::_))
-			.WillRepeatedly(testing::Return(false));
-
-		// Set the player to return nullptr for piece by default
-		EXPECT_CALL(*white, piece(testing::_))
-			.WillRepeatedly(testing::Return(nullptr));
-		EXPECT_CALL(*black, piece(testing::_))
-			.WillRepeatedly(testing::Return(nullptr));
-		
-		// Set the player to not capture pieces by default
-		EXPECT_CALL(*white, capture(testing::_))
-			.WillRepeatedly(testing::Return(nullptr));
-		EXPECT_CALL(*black, piece(testing::_))
-			.WillRepeatedly(testing::Return(nullptr));
-
-		// Set the player to return nullptr for piece by default
-		EXPECT_CALL(*white, uncapture(testing::_))
-			.WillRepeatedly(testing::Return(nullptr));
-		EXPECT_CALL(*black, uncapture(testing::_))
-			.WillRepeatedly(testing::Return(nullptr));
-
+		ON_CALL(*white, opponent())
+			.WillByDefault(testing::Return(black));
+		ON_CALL(*black, opponent())
+			.WillByDefault(testing::Return(white));
 	}
 
 	virtual void TearDown() {
@@ -103,13 +62,13 @@ class KingTest : public PieceTest {};
 
 // Piece Tests
 TEST_F(PieceTest, Valid_T) {
-	Piece piece = Piece(*white, Position(0, 0));
+	PieceMock piece(*white, Position(0, 0));
 	EXPECT_TRUE(piece.valid(Position(1, 0)));
 	EXPECT_TRUE(piece.valid(Position(0, 1)));
 }
 
 TEST_F(PieceTest, Valid_InvalidPosition_F) {
-	Piece piece = Piece(*white, Position(0, 0));
+	PieceMock piece(*white, Position(0, 0));
 	EXPECT_FALSE(piece.valid(Position(-1, 0)));
 	EXPECT_FALSE(piece.valid(Position(0, -1)));
 	EXPECT_FALSE(piece.valid(Position(8, 0)));
@@ -119,15 +78,15 @@ TEST_F(PieceTest, Valid_InvalidPosition_F) {
 }
 
 TEST_F(PieceTest, Valid_AlliedPiece_F) {
-	Piece piece = Piece(*white, Position(0, 0));
+	PieceMock piece(*white, Position(0, 0));
 	EXPECT_CALL(*white, piece(Position(1, 0)))
 		.WillOnce(testing::Return(&piece));	
 	EXPECT_FALSE(piece.valid(Position(1, 0)));
 }
 
 TEST_F(PieceTest, Valid_EnemyPiece_T) {
-	Piece wpiece = Piece(*white, Position(0, 0));
-	Piece bpiece = Piece(*black, Position(1, 0));
+	PieceMock wpiece(*white, Position(0, 0));
+	PieceMock bpiece(*black, Position(1, 0));
 	EXPECT_CALL(*white, piece(Position(1, 0)))
 		.WillOnce(testing::Return(&bpiece));	
 	EXPECT_FALSE(wpiece.valid(Position(1, 0)));
@@ -135,12 +94,25 @@ TEST_F(PieceTest, Valid_EnemyPiece_T) {
 
 // Pawn Tests
 TEST_F(PawnTest, Valid_ForwardMove_T) {
-	Pawn wpawn = Pawn(*white, Position(6, 1));
-	Pawn bpawn = Pawn(*black, Position(1, 1));	
-	EXPECT_TRUE(wpawn.valid(Position(5, 1)));
-	EXPECT_TRUE(bpawn.valid(Position(2, 1)));
+	PawnMock wpawn(*white, Position(6, 1));
+	PawnMock bpawn(*black, Position(1, 1));		
+	std::set<Move> wmoves = wpawn.moves();
+	std::set<Move> bmoves = bpawn.moves();
+
+	EXPECT_EQ(2, wmoves.size());
+	EXPECT_EQ(2, bmoves.size());
+
+	EXPECT_NE(wmoves.end(), wmoves.find(
+				Move(MoveType::kDefault, Position(6, 1), Position(5, 1))));
+	EXPECT_NE(bmoves.end(), bmoves.find(
+				Move(MoveType::kDefault, Position(1, 1), Position(2, 1))));
+	EXPECT_NE(wmoves.end(), wmoves.find(
+				Move(MoveType::kDefault, Position(6, 1), Position(4, 1))));
+	EXPECT_NE(bmoves.end(), bmoves.find(
+				Move(MoveType::kDefault, Position(1, 1), Position(3, 1))));
 }
 
+/*
 TEST_F(PawnTest, Valid_2ForwardMove_T) {
 	Pawn wpawn = Pawn(*white, Position(6, 1));
 	Pawn bpawn = Pawn(*black, Position(1, 1));
@@ -408,5 +380,5 @@ TEST_F(KingTest, Valid_CastleThroughCheck_F) {
 	EXPECT_FALSE(king.valid(Position(7, 6)));
 	
 }
-
+*/
 } // namespace chess

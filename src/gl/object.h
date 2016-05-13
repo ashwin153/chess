@@ -1,7 +1,9 @@
 #ifndef GL_OBJECT_H
 #define GL_OBJECT_H
 
-#include "position.h"
+#include "core/position.h"
+#include "core/piece.h"
+
 #include "scene/mesh.h"
 
 namespace chess {
@@ -74,7 +76,8 @@ public:
 
 /*! Piece Object
  * This class represents an object that follows a piece around the board. Unlike
- * regular objects, pieces have a dynamic position.
+ * regular objects, pieces have a dynamic position. However, piece objects use
+ * the same calculations for determining the model matrix.
  */
 class PieceObject : public Object {
 private:

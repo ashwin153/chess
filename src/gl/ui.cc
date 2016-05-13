@@ -46,7 +46,7 @@ ChessWindow::ChessWindow(int w, int h) : Window(w, h, "3D Chess") {
 		}
 	}
 	
-	for (int i = 0; i <= 1; i++) {
+/*	for (int i = 0; i <= 1; i++) {
 		auto owner = (i == 0) ? _game->black() : _game->white(); 	
 		_objects.push_back(new PieceObject("./meshes/rook.obj", 
 					owner->piece(Position(i*7, 0))));
@@ -69,6 +69,7 @@ ChessWindow::ChessWindow(int w, int h) : Window(w, h, "3D Chess") {
 			_objects.push_back(new PieceObject("./meshes/pawn.obj",
 					   owner->piece(Position(i*5+1, j))));	
 	}
+*/
 }
 
 ChessWindow::~ChessWindow() {
@@ -151,14 +152,14 @@ void ChessWindow::on_click(int button, int action, int mods) {
 //			if (selected->type() == Type::kWhitePiece || 
 //				selected->type() == Type::kBlackPiece)
 				_clicked = selected;
-		} else if (_game->make(Move(_clicked->loc(), selected->loc()))) {
-			_clicked = nullptr;
+		} //else if (_game->make(Move(_clicked->loc(), selected->loc()))) {
+		//	_clicked = nullptr;
 
-			if (selected->type() == Type::kWhitePiece ||
-				selected->type() == Type::kBlackPiece)
-				_objects.erase(std::remove(_objects.begin(), 
-						_objects.end(), selected), _objects.end());
-		}
+		//	if (selected->type() == Type::kWhitePiece ||
+		//		selected->type() == Type::kBlackPiece)
+		//		_objects.erase(std::remove(_objects.begin(), 
+		//				_objects.end(), selected), _objects.end());
+		//}
 	}
 }
 

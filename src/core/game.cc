@@ -27,9 +27,9 @@ Game::Game(const std::string& pgn) {
 	}
 }
 
-Game::Game(std::vector<Move> history) : Game() {
-   	_history = history;
-	step(history.size());	
+Game::Game(std::vector<Move> moves) : Game() {
+   	_moves = moves;
+	step(moves.size());	
 }
 
 Game::~Game() {
@@ -40,31 +40,24 @@ Game::~Game() {
 }
 
 void Game::step(int times) {
-	for (int i = 0; i < times && _turn < _history.size(); i++) {
-		Move move = _history[_turn];
-		next()->piece(move.cur)->move(move.nxt);
+	for (int i = 0; i < times && _turn < _moves.size(); i++) {	
+		next()->make(_moves[_turn]);
 		_turn++;
 	}
 }
 
 void Game::back(int times) {
 	for (int i = 0; i < times && _turn >= 0; i++) {
-		Move move = _history[_turn];
-		next()->piece(move.nxt)->undo(move.cur);
+		next()->undo();
 		_turn--;
 	}
 }
 
-bool Game::make(const Move& move) {
-	if (!next()->piece(move.cur) ||
-		!next()->piece(move.cur)->valid(move.nxt) ||
-		next()->in_check(move))
-		return false;
-	
-	_history.erase(_history.begin() + _turn, _history.end());
-	_history.push_back(move);	
+void Game::make(const Move& move) {
+	_moves.push_back(move);
+	_moves.erase(_moves.begin() + _turn, _moves.end());
+	_moves.push_back(move);	
 	step(1);
-	return true;
 }
 
 std::string Game::to_string() const {

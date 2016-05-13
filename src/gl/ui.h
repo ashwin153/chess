@@ -1,9 +1,10 @@
 #ifndef GL_UI_H
 #define GL_UI_H
 
-#include "game.h"
-#include "position.h"
 #include "object.h"
+
+#include "core/game.h"
+#include "core/position.h"
 
 #include "render/window.h"
 #include "render/shader.h"

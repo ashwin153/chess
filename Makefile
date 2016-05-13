@@ -7,7 +7,7 @@ SRCEXT := cc
 # Production: source, build, include and output locations
 SRC := src
 BIN := bin
-INC := -I include -I . -I ./src/core -I ./src/gl
+INC := -I include -I . -I ./src -I ./src/gl
 LIB := -lglfw3 -lglew -framework OpenGL
 BUILD := build
 

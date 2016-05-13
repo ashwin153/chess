@@ -1,7 +1,6 @@
 #ifndef GL_MESH_H
 #define GL_MESH_H
 
-#include "position.h"
 #include "tracer/ray.h"
 #include "tracer/bvh.h"
 

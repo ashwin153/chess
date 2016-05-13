@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <tuple>
 
 namespace chess {
 
@@ -37,45 +38,65 @@ struct Position {
 		return 'a' + y;
 	}
 
-	/*! Manhattan distance between positions. */
+	/*! Manhattan Distance */
 	inline int dist(const Position& pos) const {
 		return std::abs(pos.x - x) + std::abs(pos.y - y);
 	}
 
-	/*! Overload the equal operator. */
+	/*! Overload Equal Operator */
 	inline Position& operator=(const Position& rhs) {
 		x = rhs.x;
 		y = rhs.y;
 		return *this;
 	}
 
-	/*! Overload the addition operator. */
+	/*! Overload Addition Operator */
 	inline Position& operator+=(const Position& rhs) {
 		x += rhs.x;
 		y += rhs.y;
 		return *this;
 	}
 
-	/*! Overload the subtraction operator. */
+	/*! Overload Subtraction Operator */
 	inline Position& operator-=(const Position& rhs) {
 		x -= rhs.x;
 		y -= rhs.y;
 		return *this;	
 	}
 
-	/*! Overload the scalar multiplication operator. */
+	/*! Overload Scalar Multiplication Operator */
 	inline Position& operator*=(const double rhs) {
 		x *= rhs;
 		y *= rhs;
 		return *this;
 	}
 
-	/*! Overload the equals operator. */
+	/*! Overload Equals Operator */
 	inline bool operator==(const Position& pos) const {
 		return x == pos.x && y == pos.y;
 	}
 
-	/*! Overload the not equals operator. */
+	/*! Overload Less Than Operator */
+	inline bool operator<(const Position& pos) const {
+		return std::tie(x, y) < std::tie(pos.x, pos.y);
+	}
+
+	/*! Overload Less Than Equal To Operator */
+	inline bool operator<=(const Position& pos) const {
+		return *this < pos || *this == pos;
+	}
+
+	/*! Overload Greater Than Equal To Operator */
+	inline bool operator>=(const Position& pos) const {
+		return !(*this < pos);
+	}
+
+	/*! Overload Greater Than Operator */
+	inline bool operator>(const Position& pos) const {
+		return !(*this <= pos);
+	}
+
+	/*! Overload Not Equal Operator */
 	inline bool operator!=(const Position& pos) const { 
 		return !(*this == pos);
 	}

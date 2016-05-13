@@ -1,9 +1,10 @@
 #ifndef CORE_PIECE_H
 #define CORE_PIECE_H
 
+#include "move.h"
 #include "position.h"
 #include "player.h"
-#include <vector>
+#include <set>
 #include <string>
 
 namespace chess {
@@ -20,54 +21,81 @@ private:
 	Position _org;
 
 public:
-	/*! Constructs a piece at the specified position on the board. */
+	/*! Construct Piece
+	 * Constructs a piece at the specified location and links it to the
+	 * specified player. Note: this method only sets up the Piece-Player
+	 * relationship and not the Player-Piece relationship. Therefore, it really
+	 * only should be called by Player objects.
+	 */
 	Piece(Player& owner, const Position& loc) 
 		: _owner(owner), _loc(loc), _org(loc) {}
 
-	/*! All polymorphic types need a virtual destructor. */	
+	/*! Destruct Piece
+	 * According to Item 7 in Scott Meyers' Effective C++, every polymorphic base
+	 * class should have a virtual destructor.
+	 */
 	virtual ~Piece() {}
+	
+	/*! Position Validity
+	 * Returns true if the specified position does not contain an allied piece
+	 * and is within the chess board.
+	 * @return True if valid position, False otherwise
+	 */
+	bool valid(const Position& pos) const;
+    
+	/* Possible Moves
+	 * Returns a vector of all the possible moves that the piece may make. Note
+	 * that possible moves are not the same as playable moves. For example, it
+	 * might be possible for a piece to move to a position, but doing so might
+	 * place its king in check. Therefore, the move is possible but not possible.
+	 * Therefore, additional checks must be made to filter out unplayable moves.
+	 * @param[in] pos Position
+	 * @return Possible moves
+	 */
+	virtual std::set<Move> moves() = 0;
+	
+	/*! String Representation
+	 * Returns a string representation of this piece. Used by the textual chess
+	 * game to display the contents of the board.
+	 * @return String representation of piece
+	 */
+	virtual std::string to_string() const = 0;
+	
+	/*! Has Moved
+	 * Returns whether or not the piece has moved from its original position.
+	 * Used to determine if pawns are allowed to move forward or not.
+	 * @return True if it has moved, False otherwise
+	 */
+	virtual bool has_moved() const {
+		return _loc != _org;
+	}
 
-	/*! Returns the player who controls this piece. */
+	/*! Piece Owner
+	 * Returns the player who owns this piece. Used by subclasses to acces the
+	 * private owner field. This allows pieces to be aware of the other pieces
+	 * on the board when making move calculations.
+	 * @return Owner of piece
+	 */
 	inline Player& owner() const {
 		return _owner;
 	}
 
-	/*! Returns location of piece
-	 * We return it by constant reference so that other objects may cache the
-	 * return value and can check up the location of the piece in the future
-	 * without maintaining a reference to the piece without being permitted to
-	 * alter the position of the piece.
+	/*! Get Location
+	 * Returns the position of this piece on the chess board.
+	 * @return Piece location
 	 */
-	inline const Position& loc() {
+	inline Position loc() const {
 		return _loc;
 	}
 
-	/*! Returns whether or not the piece has been moved. */
-	inline bool has_moved() const {
-		return _loc != _org;
+	/*! Set Location
+	 * Sets the position of this piece to the specified position.
+	 * @return New piece location
+	 */
+	inline void loc(const Position& pos) {
+		_loc = pos;
 	}
 	
-	/*! Returns a string representation of this piece. */
-	inline virtual std::string to_string() const {
-		return " ";
-	}
-
-	/*! Move the piece to the specified position.
-	 * @param[in] pos Position
-	 */
-	virtual void move(const Position& pos);
-
-	/*! Undos a move to the specified position.
-	 * @param[in] pos Position/ 
-	 */
-	virtual void undo(const Position& pos);
-
-	/*! Verifies that the specified position is a valid move.
-     * @param[in] pos Position
-	 * @return True if valid move, false otherwise
-	 */
-	virtual bool valid(const Position& pos);
-
 };
 
 /*! Pawn Piece
@@ -78,9 +106,9 @@ public:
 class Pawn : public Piece {
 public:
 	Pawn(Player& owner, Position loc) : Piece(owner, loc) {}
-	void move(const Position& pos);
-	bool valid(const Position& pos);
-	inline std::string to_string() const {
+	std::set<Move> moves() override;
+
+	inline std::string to_string() const override {
 		return (owner().is_white()) ? "♙" : "♟";
 	}
 };
@@ -91,8 +119,9 @@ public:
 class Knight : public Piece {
 public:
 	Knight(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool valid(const Position& pos);
-	inline std::string to_string() const {
+	std::set<Move> moves() override;
+	
+	inline std::string to_string() const override {
 		return (owner().is_white()) ? "♘" : "♞";
 	}
 };
@@ -103,8 +132,9 @@ public:
 class Bishop : virtual public Piece {
 public:
 	Bishop(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool valid(const Position& pos);
-	inline std::string to_string() const {
+	std::set<Move> moves() override;
+
+	inline std::string to_string() const override {
 		return (owner().is_white()) ? "♗" : "♝";
 	}
 };
@@ -116,8 +146,9 @@ public:
 class Rook : virtual public Piece {
 public:
 	Rook(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool valid(const Position& pos);	
-	inline std::string to_string() const {
+	std::set<Move> moves() override;
+
+	inline std::string to_string() const override {
 		return (owner().is_white()) ? "♖" : "♜";
 	}
 };
@@ -131,9 +162,9 @@ class Queen : public Rook, public Bishop {
 public:
 	Queen(Player& owner, Position loc) 
 		: Piece(owner, loc), Rook(owner, loc), Bishop(owner, loc) {}
-	bool valid(const Position& pos);
+	std::set<Move> moves() override;
 	
-	inline std::string to_string() const {
+	inline std::string to_string() const override {
 		return (owner().is_white()) ? "♕" : "♛";
 	}
 };
@@ -148,10 +179,9 @@ public:
 class King : public Piece {
 public:
 	King(Player& owner, Position loc) : Piece(owner, loc) {}
-	void move(const Position& pos);
-	void undo(const Position& pos);
-	bool valid(const Position& pos);
-	inline std::string to_string() const {
+	std::set<Move> moves() override;
+	
+	inline std::string to_string() const override {
 		return (owner().is_white()) ? "♔" : "♚";
 	}
 };

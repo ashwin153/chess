@@ -1,6 +1,9 @@
 #ifndef CORE_MOVE_H
 #define CORE_MOVE_H
 
+#include "position.h"
+#include <tuple>
+
 namespace chess {
 
 /*! Move Type
@@ -9,14 +12,14 @@ namespace chess {
  * execute a particular move.
  */
 enum class MoveType {
-	DEFAULT,
-	CAPTURE,
-	CASTLE_KINGSIDE,
-	CASTLE_QUEENSIDE,
-	PROMOTE_QUEEN,
-	PROMOTE_KNIGHT,
-	PROMOTE_BISHOP,
-	PROMOTE_ROOK,
+	kDefault,
+	kCastleKingside,
+	kCastleQueenside,
+	kEnpassant,
+	kPromoteQueen,
+	kPromoteKnight,
+	kPromoteBishop,
+	kPromoteRook
 };
 
 /*! Chess Move
@@ -37,7 +40,24 @@ struct Move {
 	 */
 	Move(MoveType type, Position cur, Position nxt) 
 		: type(type), cur(cur), nxt(nxt) {}
+
+	/*! Overload Equals Operator */
+	inline bool operator==(const Move& move) const {
+		return type == move.type && cur == move.cur && nxt == move.nxt;
+	}
+
+	/*! Overload Less Than Operator */
+	inline bool operator<(const Move& move) const {
+		return std::tie(type, cur, nxt) < std::tie(move.type, move.cur, move.nxt);
+	}
+
+	/*! Overload Not Equals Operator */
+	inline bool operator!=(const Move& move) const {
+		return !(*this == move);
+	}	
 };
+
+}
 
 #endif // CORE_MOVE_H
 

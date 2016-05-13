@@ -1,184 +1,163 @@
 #include "piece.h"
 #include "game.h"
+#include <vector>
 #include <iostream>
 
 namespace chess {
 
-void Piece::move(const Position& pos) {
-	// Move the piece to the specified position
-	_loc = pos;
+bool Piece::valid(const Position& pos) const {
+	// Pieces may not move out of bounds, onto allied pieces
+	return (!owner().piece(pos) && pos.x >= 0 && 
+			pos.x < 8 && pos.y >= 0 && pos.y < 8);
+}
+
+std::set<Move> Pawn::moves() {
+	std::set<Move> moves;
 	
-	// Capture any opposing pieces
-	owner().opponent()->capture(_loc);
-}
+	// Forward Movement
+	Position adj = owner().is_white() ? Position(-1, 0) : Position(1, 0);
+	if (valid(loc() + adj) && !owner().opponent()->piece(loc() + adj))
+		moves.insert(Move(MoveType::kDefault, loc(), loc() + adj));
 
-void Piece::undo(const Position& pos) {
-	// Uncapture any opposing pieces
-	owner().opponent()->uncapture(_loc);
-	
-	// Move the piece to the specified position
-	_loc = pos;
-}
-
-bool Piece::valid(const Position& pos) {
-	// Verify that the position is within bounds and that
-	// the owner of this piece does not contain a piece of the
-	// same color at the specified position.
-	if (!(!owner().piece(pos) &&
-		pos.x >= 0 && pos.x < 8 &&
-		pos.y >= 0 && pos.y < 8))
-		return false;
-	return true;
-}
-
-void Pawn::move(const Position& pos) {
-	Piece::move(pos);
+	// Diagonal Capture
+	for (int i = -1; i <= 1; i += 2) {
+		Position diag = adj + Position(0, i);
+		if (owner().opponent()->piece(loc() + diag))
+			moves.insert(Move(MoveType::kDefault, loc(), loc() + diag));
+	}
 
 	// Pawn Promotion
-	if (loc().x == 0 || loc().x == 7) {
-		owner().capture(loc());
-		owner().spawn(new Queen(owner(), loc()));
-	}
-}
-
-bool Pawn::valid(const Position& pos) {
-	if (!Piece::valid(pos)) return false;
-
-	// White pawns move up the board, and black pawns move down.	
-	int dir = owner().is_white() ? -1 : 1;
-
-	// Pawns may always move forward unless there is an opposing
-	// piece already occupying that position.
-	if (pos - loc() == Position(dir, 0) &&
-		!owner().opponent()->piece(pos)) 
-		return true;
-
-	// Pawns may move forward twice unless moving twice would
-	// prevent a capture (en passant). Otherwise, the pawn may
-	// only move once.
-	if (pos - loc() == Position(2*dir, 0) && !has_moved() &&
-		!owner().opponent()->piece(pos) &&
-		!owner().opponent()->piece(pos - Position(dir, 0)) &&
-		!owner().opponent()->piece(loc() + Position(2*dir, +1)) &&
-		!owner().opponent()->piece(loc() + Position(2*dir, -1)))
-		return true;
-
-	// Pawns may move diagonally to capture
-	if (owner().opponent()->piece(pos) &&
-		abs(pos.y - loc().y) == 1 && 
-		pos.x - loc().x == dir)
-		return true;	
-
-	return false;
-}
-
-bool Knight::valid(const Position& pos) {
-	// Knights may move to a position as long as it is within 3
-	// tiles (manhattan distance), but not along a straight line.
-	return Piece::valid(pos) && loc().dist(pos) == 3 &&
-		loc().x != pos.x && loc().y != pos.y;
-}
-
-bool Bishop::valid(const Position& pos) {
-	int dx = pos.x - loc().x;
-	int dy = pos.y - loc().y;
-	
-	// The bishop may only move diagonally
-	if (!Piece::valid(pos) || std::abs(dx) != std::abs(dy)) 
-		return false;
-
-	// The bishop may not pass through pieces of either color.
-	int sx = ((dx>0)-(dx<0)), sy = ((dy>0)-(dy<0));
-	for(int i = 1; i < std::abs(dx); i++) {
-		Position nxt = loc() + Position(i*sx, i*sy);
-		if (owner().piece(nxt) || owner().opponent()->piece(nxt))
-			return false;
-	}
-	
-	return true;
-}
-
-bool Rook::valid(const Position& pos) {
-	int dx = pos.x - loc().x;
-	int dy = pos.y - loc().y;
-	
-	// The rook may only move horizontally xor vertically
-	if (!Piece::valid(pos) || (dx != 0 && dy != 0)) 
-		return false;
-
-	// The rook may not pass through pieces of either color. The values
-	// sx and sy store the signs of the differences. We make use of
-	// clever arithmetic and the fact that one of dx and dy is zero
-	// in order to test all possible paths to pos with 1 conditional.
-	int sx = ((dx>0)-(dx<0)), sy = ((dy>0)-(dy<0));
-	for(int i = 1; i < std::abs(dx + dy); i++) {
-		Position nxt = loc() + Position(i*sx, i*sy);
-		if (owner().piece(nxt) || owner().opponent()->piece(nxt))
-			return false;
-	}
-	
-	return true;
-}
-
-bool Queen::valid(const Position& pos) {
-	return Rook::valid(pos) || Bishop::valid(pos);
-}
-
-void King::move(const Position& pos) {
-	// Move the rook if castling
-	int dy = pos.y - loc().y;
-	if (std::abs(dy) == 2) {
-		int sy = ((dy>0)-(dy<0));
-		Piece* rook = owner().piece(Position(pos.x, (sy > 0) * 7));	
-		if (rook) rook->move(pos - Position(0, sy));
+	for (std::set<Move>::iterator it = moves.begin(); it != moves.end(); it++) {
+		if (it->type == MoveType::kDefault && (it->nxt.x == 0 || it->nxt.x == 7)) {
+			moves.insert(Move(MoveType::kPromoteQueen,  it->cur, it->nxt));
+			moves.insert(Move(MoveType::kPromoteKnight, it->cur, it->nxt));
+			moves.insert(Move(MoveType::kPromoteBishop, it->cur, it->nxt));
+			moves.insert(Move(MoveType::kPromoteRook,   it->cur, it->nxt));
+			moves.erase(it);
+		}
 	}
 
-	// Otherwise move normally
-	Piece::move(pos);
-}
+	// Double Forward Movement
+	if (valid(loc() + 2 * adj) && !has_moved() &&
+			!owner().opponent()->piece(loc() + adj) &&
+			!owner().opponent()->piece(loc() + 2 * adj))
+		moves.insert(Move(MoveType::kDefault, loc(), loc() + 2 * adj));
 
-void King::undo(const Position& pos) {
-	// Move the rook if castling
-	int dy = pos.y - loc().y;
-	if (std::abs(dy) == 2) {
-		int sy = ((dy>0)-(dy<0));
-		Piece* rook = owner().piece(pos - Position(0, sy));
-		if (rook) rook->undo(Position(pos.x, (sy < 0) * 7));	
+	// Enpassant
+	for (int i = -1; i <= 1; i += 2) {
+		Position enp = Position(0, i);
+		if (valid(loc() + adj + enp) && 
+				owner().opponent()->piece(loc() + enp) &&
+				dynamic_cast<Pawn*>(owner().opponent()->piece(loc() + enp)) &&
+				owner().opponent()->turns() > 0 &&
+				owner().opponent()->last().cur == loc() + 2 * adj + enp)
+			moves.insert(Move(MoveType::kEnpassant, loc(), loc() + adj + enp));
 	}
 
-	// Otherwise undo normally
-	Piece::undo(pos);
+	return moves;
 }
 
-bool King::valid(const Position& pos) {
-	int dx = std::abs(pos.x - loc().x);
-	int dy = std::abs(pos.y - loc().y);
-	
-	// The king may always move one square in any direction
-	if (Piece::valid(pos) && dx <= 1 && dy <= 1) 
-		return true;
-	
-	// The king may move twice horizontally to castle
-	if (dx == 0 && dy == 2) {
-		bool kingside = (pos.y - loc().y) > 0;
-		Piece* rook   = owner().piece(Position(pos.x, kingside * 7));
-		Position adj  = Position(0, kingside * 2 - 1); 
-		
-		// Castles are invalid if the king moves out of or through check
-		if (has_moved() || !rook || rook->has_moved() || 
-			owner().in_check(Move(loc(), loc())) || 
-			owner().in_check(Move(loc(), loc() + adj)))
-			return false;
-	
-		// Check that all positions between the king and rook are empty
-		for (int i = 1; i <= 3 - kingside; i++)
-			if (owner().piece(loc() + i * adj) ||
-				owner().opponent()->piece(loc() + i * adj))
-				return false;
-		return true;
+std::set<Move> Knight::moves() {
+	std::set<Move> moves;
+
+	// L Move
+	for (int i = 1; i <= 2; i ++) {
+		std::vector<Position> adj = {
+			Position(+i, 3-i), Position(+i, i-3),
+			Position(-i, 3-i), Position(-i, i-3)};
+
+		for (int j = 0; j < adj.size(); j++)
+			if (valid(loc() + adj[j]))
+				moves.insert(Move(MoveType::kDefault, loc(), loc() + adj[j]));
 	}
 
-	return false;
+	return moves;
+}
+
+std::set<Move> Bishop::moves() {
+	std::set<Move> moves;
+
+	// Diagonal Movement
+	for (int i = -1; i <= 1; i += 2) {
+		for (int j = -1; j <= 1; j+= 2) {
+			Position diag = Position(i, j);
+			while (valid(loc() + diag)) {
+				moves.insert(Move(MoveType::kDefault, loc(), loc() + diag));
+				diag += Position(i, j);
+			}
+		}
+	}
+	
+	return moves;
+}
+
+std::set<Move> Rook::moves() {
+	std::set<Move> moves;
+
+	// Vertical Movement
+	for (int i = -1; i <= 1; i += 2) {
+		Position vert = Position(i, 0);
+		while (valid(loc() + vert)) {
+			moves.insert(Move(MoveType::kDefault, loc(), loc() + vert));
+			vert += Position(i, 0);
+		}
+	}
+
+	// Horizontal Movement
+	for (int i = -1; i <= 1; i += 2) {
+		Position hori = Position(0, i);
+		while (valid(loc() + hori)) {
+			moves.insert(Move(MoveType::kDefault, loc(), loc() + hori));
+			hori += Position(0, i);
+		}
+	}
+
+	return moves;
+}
+
+std::set<Move> Queen::moves() {
+	std::set<Move> rmoves = Rook::moves();
+	std::set<Move> bmoves = Bishop::moves();
+	rmoves.insert(bmoves.begin(), bmoves.end());
+	return rmoves;
+}
+
+std::set<Move> King::moves() {
+	std::set<Move> moves;
+
+	// Kingside Castling
+	Piece* krook = owner().piece(Position(loc().x, 7));
+	Position right = Position(0, 1);
+	if (!has_moved() && krook && !krook->has_moved() &&
+			valid(loc() + right) && valid(loc() + 2*right) &&
+			!owner().opponent()->piece(loc() + right) &&
+			!owner().opponent()->piece(loc() + 2*right) &&
+			!owner().in_check() &&
+			!owner().in_check(Move(MoveType::kDefault, loc(), loc() + right)))
+		moves.insert(Move(MoveType::kCastleKingside, loc(), loc() + 2*right));
+
+	// Queenside Castling
+	Piece* qrook = owner().piece(Position(loc().x, 0));
+	Position left = Position(0, -1);
+	if(!has_moved() && qrook && !qrook->has_moved() && valid(loc() + left) && 
+			valid(loc() + 2*left) && valid(loc() + 3*left) &&
+			!owner().opponent()->piece(loc() + 1*left) &&
+			!owner().opponent()->piece(loc() + 2*left) &&
+			!owner().opponent()->piece(loc() + 3*left) &&
+			!owner().in_check() &&
+			!owner().in_check(Move(MoveType::kDefault, loc(), loc() + left)))
+		moves.insert(Move(MoveType::kCastleQueenside, loc(), loc() + 2*left));
+	
+	// Adjacent Movement
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			Position adj = Position(i, j);
+			if (valid(loc() + adj) && (i != 0 || j != 0))
+				moves.insert(Move(MoveType::kDefault, loc(), loc() + adj));
+		}
+	}
+
+	return moves;
 }
 
 } // namespace chess
