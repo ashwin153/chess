@@ -1,17 +1,17 @@
-# Select compiler, flags and source properties
+# Compiler, Linker Flags, Source Properties
 CC := g++
-CFLAGS := -std=c++11 -g -Wall -O3 #-Werror
-LFAGS  := -L/usr/local -L lib
+CFLAGS := -std=c++11 -g -O3 -Wall -Werror
+LFLAGS := -L/usr/local -L lib
 SRCEXT := cc
 
-# Production: source, build, include and output locations
+# Required Folders
 SRC := src
 BIN := bin
 INC := -I include -I . -I ./src -I ./src/gl
 LIB := -lboost_serialization -lglfw3 -lglew -framework OpenGL
 BUILD := build
 
-# Testing: source, build, include, and output locations
+# Test Dependencies
 TEST := test
 TLIB := $(LIB) -pthread -L lib -lgmock
 
@@ -34,12 +34,12 @@ all: $(TARGET_TEXT) $(TARGET_DRAW)
 # Link chess-text (bin/chess-text)
 $(TARGET_TEXT): $(TEXT_RUNNER) $(OBJECTS)
 	@mkdir -p $(BIN)
-	$(CC) $^ -o $@ $(LFLAG) $(LIB)
+	$(CC) $^ -o $@ $(LFLAGS) $(LIB)
 
 # Link chess-draw (bin/chess-draw)
 $(TARGET_DRAW): $(DRAW_RUNNER) $(OBJECTS)
 	@mkdir -p $(BIN)
-	$(CC) $^ -o $@ $(LFLAG) $(LIB)
+	$(CC) $^ -o $@ $(LFLAGS) $(LIB)
 
 # Compile (*.o)
 $(BUILD)/%.o: $(SRC)/%.$(SRCEXT)
@@ -54,6 +54,6 @@ clean:
 # Tester
 test: $(OBJECTS)
 	@echo " $(TOBJ)"
-	$(CC) $(CFLAGS) $(TESTS) $(TESTOBJ) $(INC) $(LFLAG) $(TLIB) -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) $(TESTS) $(TESTOBJ) $(INC) $(LFLAGS) $(TLIB) -o $(TARGET_TEST)
 
 .PHONY: clean
