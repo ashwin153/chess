@@ -1,7 +1,7 @@
 #ifndef AI_PARSER_H
 #define AI_PARSER_H
 
-#include "../struct/blocking_queue.h"
+#include "blocking_queue.h"
 #include <iostream>
 
 namespace chess {
@@ -30,7 +30,6 @@ public:
 	 * and error information to the log stream, and uses nthreads.
 	 */
 	Parser(std::ostream& out, std::ostream& log, int nthreads);
-
 
 	/*! Parse File
 	 * Parses the contents of the specified stream. Assumes that the stream is a

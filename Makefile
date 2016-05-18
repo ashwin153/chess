@@ -8,7 +8,7 @@ SRCEXT := cc
 SRC := src
 BIN := bin
 INC := -I include -I . -I ./src -I ./src/gl
-LIB := -lglfw3 -lglew -framework OpenGL
+LIB := -lboost_serialization -lglfw3 -lglew -framework OpenGL
 BUILD := build
 
 # Testing: source, build, include, and output locations

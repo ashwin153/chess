@@ -2,9 +2,13 @@
 #define CORE_MOVE_H
 
 #include "position.h"
+
 #include <tuple>
 #include <functional>
 #include <type_traits>
+
+#include <boost/functional/hash.hpp>
+#include <boost/serialization/access.hpp>
 
 namespace chess {
 
@@ -69,20 +73,6 @@ namespace std {
  */
 template <>
 struct hash<chess::Move> {
-private:
-	/*! Combine Hashes
-	 * Rather than having to link with Boost just to use the useful hash_combine
-	 * function, I just copy and pasted their implementation of this method.
-	 * Fucking sue me.
-	 * @param[in, out] seed Hash seed
-	 * @param[in] v Combine value
-	 */
-	template <class T>
-	inline void hash_combine(std::size_t& seed, const T& v) const {
-    	seed ^= hash<T>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	}
-
-public:
 	/*! Hash
 	 * C++ probably has the most garbage way of implementing hashes for user
 	 * defined objects. Not only do you have to create this random struct in
@@ -92,16 +82,68 @@ public:
 	 */
 	size_t operator()(const chess::Move& move) const {
 		size_t seed = 0;
-		hash_combine(seed, hash<int>()(static_cast<int>(move.type)));
-		hash_combine(seed, hash<int>()(move.cur.x));
-		hash_combine(seed, hash<int>()(move.cur.y));
-		hash_combine(seed, hash<int>()(move.nxt.x));
-		hash_combine(seed, hash<int>()(move.nxt.y));
+		boost::hash_combine(seed, hash<int>()(static_cast<int>(move.type)));
+		boost::hash_combine(seed, hash<int>()(move.cur.x));
+		boost::hash_combine(seed, hash<int>()(move.cur.y));
+		boost::hash_combine(seed, hash<int>()(move.nxt.x));
+		boost::hash_combine(seed, hash<int>()(move.nxt.y));
 		return seed;
 	}
 };
 
 } // namespace std
+
+namespace boost {
+namespace serialization {
+
+/*! Boost Serialization
+ * Writes this object to the specified archive using boost serialization.
+ * Because the Move class does not expose a default constructor, implementation
+ * of this method is delegated to the save_construct_data and load_construct_data
+ * methods.
+ * @param[in, out] ar Boost archive
+ * @param[in] move Serialized/Deserialized move
+ * @param[in] ver Archive version
+ */
+template <typename Archive>
+inline void serialize(Archive& ar, chess::Move& move, const unsigned int ver) {}
+
+/*! Save Move
+ * Saves the move to the specified archive. Note: the order in which members are
+ * saved matters; variables must be loaded in the same order when loading.
+ * @param[in, out] ar Boost archive
+ * @param[in] move Move to serialize
+ * @param[in] version Archive version
+ */
+template <typename Archive>
+inline void save_construct_data(Archive& ar, 
+		const chess::Move* move, const unsigned int version) {
+
+	ar << move->type << move->cur.x << move->cur.y << move->nxt.x << move->nxt.y;
+}
+
+/*! Load Move
+ * Loads the move from the serialized archive. Because Move does not expose
+ * a default constructor, we must manual construct moves from the archive file.
+ * @param[in] ar Boost archive
+ * @param[in, out] move Deserialized move
+ * @param[in] version Archive version
+ */
+template <typename Archive>
+inline void load_construct_data(Archive& ar, 
+		chess::Move* move, const unsigned int version) {
+	
+	chess::MoveType type;
+	int cx, cy, nx, ny;
+	ar >> type >> cx >> cy >> nx >> ny;
+	
+	chess::Position cur(nx, ny);
+	chess::Position nxt(nx, ny);
+	::new(move) chess::Move(type, cur, nxt);
+}
+
+} // namespace serialization
+} // boost
 
 #endif // CORE_MOVE_H
 
