@@ -7,5 +7,8 @@ lib/
 # Executables
 bin/
 
+# Documentation
+doc/
+
 # Operating system
 .DS_Store

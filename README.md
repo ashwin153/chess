@@ -1,48 +1,22 @@
-# 3D Chess + Chess Engine
-This project is my first large scale C++ project that attempts to incorporate various aspects from a number of my current and previous classes (graphics, algorithms, statistics, etc.). The goal is to write a robust chess application, design an OpenGL renderer, and create chess engines using various statistical and machine learning models.
+# Chess
+This project is my first large scale C++ project that attempts to incorporate various aspects from a number of my current and previous classes (graphics, algorithms, statistics, etc.). 
 
-# TODO
-- Add unit tests for Player, Game, and pawn promotion
-- Use TensorFlow for AI
+## Goals
+The goal is to write a robust chess application complete with a playable 3D graphical interface and a variety of chess engines that utilize different statistical and machine learning techniques.
+- **Style:** Ensure that I conform to C++/Python best practices and make good stylistic decisions when writing the code. Code should (mostly) conform to the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) and the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
+- **Efficiency:** Utilize efficient algorithms and rendering techniques.
+- **Testability:** Learn C++ testing frameworks and thoroughly test code including [Valgrind](http://valgrind.org/) and [Google Test](https://github.com/google/googletest).
+- **Documentation:** Learn how to properly document C++ code using [Doxygen](http://www.stack.nl/~dimitri/doxygen/).
+- **Design:** Create a well designed object-oriented program.
 
-# Goals
-- *Style:* Ensure that I conform to C++/Python best practices and make good stylistic decisions when writing the code.
-- *Efficiency:* Utilize efficient algorithms and rendering techniques.
-- *Testability:* Learn C++ testing frameworks and thoroughly test code.
-- *Documentation:* Learn how to properly document C++ code.
-- *Design:* Create a well designed object-oriented program.
-
-# Attribution
+## Attribution
 - Default chess piece models [Per](https://grabcad.com/library/complete-chess-set-1)
-- Modern chess piece models [sYd_e_FeX™](https://grabcad.com/library/chess-mania-2)
-- Chess Training Data [FICS Games Database](http://ficsgames.org/)
+- Chess training data [FICS Games Database](http://ficsgames.org/)
 
-# Build (Mac OSX)
-Building project requires [Homebrew](http://brew.sh/).
+## Build (Mac OSX x64)
+Run the install.sh script to build project dependencies if the following requirements are met:
+- Python 2.7
+- C++11
+- OpenGL
+- Homebrew
 
-## Graphics Dependencies
-```
-brew install glfw3
-brew install glew
-```
-
-## Testing Dependencies
-### GoogleMock and GoogleTest
-```
-brew install autoconf
-git clone https://github.com/google/googletest.git
-cd googletest/googlemock
-
-autoreconf -fvi
-./configure
-
-g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c ../googletest/src/gtest-all.cc 
-g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c src/gmock-all.cc 
-ar -rv libgmock.a gtest-all.o gmock-all.o
-
-mv libgmock.a lib
-make
-make check
-```
-
-Next, move the libgmock.a file into the lib/ directory of this project. Note that building against googlemock *also builds against googletest*.

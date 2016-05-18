@@ -7,6 +7,13 @@
 
 namespace chess {
 
+/*!
+ * This class represents a blocking queue. A blocking queue solves the producer-
+ * consumer problem by only forcing consumers to wait until the queue is
+ * non-empty before attempting to retrieve elements from it. It also includes
+ * a mutex lock to prevent multiple threads from accessing the queue at the
+ * same time. This class is thread-safe.
+ */
 template <typename T>
 class BlockingQueue {
 private:
@@ -15,9 +22,10 @@ private:
 	std::condition_variable _not_empty;
 
 public:
-	/*! Push
+	/*!
 	 * Pushes an element onto the front of the queue and notifies any waiting
 	 * threads that there are elements in queue.
+	 * @param[in] obj Object to push
 	 */
 	inline void push(const T& obj) {
 		std::unique_lock<std::mutex> lock(_mutex);
@@ -25,12 +33,12 @@ public:
 		_not_empty.notify_one();
 	}
 
-	/*! Pop
-	 * Blocks until there are elements in the queue, and then returns the top
-	 * element in the queue.
-	 * @return Top element
+	/*!
+	 * Blocks indefinitely until there are elements in the queue, and then 
+	 * returns the pops the top element of the queue.
+	 * @return Top element.
 	 */
-	inline void pop(const T& obj) {
+	inline void pop() {
 		std::unique_lock<std::mutex> lock(_mutex);
 		_not_empty.wait_for(_mutex, [this] { return !_queue.empty(); });
 		T val = _queue.back();
@@ -38,9 +46,9 @@ public:
 		return val;
 	}
 
-	/*! Size
+	/*!
 	 * Returns the number of elements in this queue.
-	 * @return Number of elements
+	 * @return Number of elements.
 	 */
 	inline int size() const {
 		std::unique_lock<std::mutex> loc(_mutex);

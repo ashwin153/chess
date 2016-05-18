@@ -12,23 +12,6 @@ Game::Game() : _turn(0) {
 	_black = new Player(_white);	
 }
 
-/*Game::Game(const std::string& pgn) {
-	std::regex reg_numb("\\s*?\\d+[.]\\s+");
-	
-	std::sregex_token_iterator iter(pgn.begin(), pgn.end(), reg_numb, -1);
-	std::sregex_token_iterator end;
-	for ( ; iter != end; ++iter) {
-		// Deal with each move
-		std::cout << *iter << '\n';
-
-		// Special Cases: Pawn Promotion, Castling, and En Passant
-		// Throw exception for unhandled cases (Pawn Promotion to non-queen)
-		 
-	}
-}*/
-
-// Pass in the Board State so we don't have to step over and over again.
-// Should make the AI considerably faster.
 Game::Game(std::vector<Move> moves) : Game() {
    	_history = moves;
 	step(moves.size());	
@@ -159,4 +142,4 @@ std::string Game::to_string() const {
 	return text + "\n";
 }
 
-}
+} // namespace chess

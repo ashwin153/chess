@@ -10,7 +10,7 @@
 
 namespace chess {
 
-/*! GLFW Window Manager
+/*!
  * This class wraps a GLFW window to provide important size information used
  * when refreshing the framebuffer at render time. The class serves literally
  * no purpose except to flex my object-oriented muscles. This goal of this class

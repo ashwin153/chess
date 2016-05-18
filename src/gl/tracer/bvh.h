@@ -17,7 +17,7 @@ private:
 	Box _box;
 
 public:
-	/*! Constructs a BVH
+	/*!
 	 * Recursively constructs sub-nodes until depth = 0 or targetLeafSize
 	 * is reached.
 	 * @param[in] objects Constituent objects
@@ -28,7 +28,8 @@ public:
 
 	virtual ~Bvh();
 
-	/* Finds the closest point of intersection
+	/*!
+	 * Finds the closest point of intersection
 	 * @param[in] ray Traced ray
 	 * @param[in,out] isect Intersection details
 	 * @return True if intersection, false otherwise

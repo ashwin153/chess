@@ -7,7 +7,7 @@
 
 namespace chess {
 
-/*! Ray
+/*!
  * This struct parameterizes a ray in the following form: r = pos + t * dir. 
  * This allows us to easily specify the position of the ray at any timestep t.
  */
@@ -17,15 +17,15 @@ private:
 	glm::vec3 _dir;
 
 public:
-	/*! Construct Ray
+	/*!
 	 * Constructs a ray at the specified position pointing in the specified
 	 * direction. The direction vector should be normalized.
 	 * @param[in] pos Position vector
 	 * @param[in] dir Normalized direction vector
 	 */
 	Ray(glm::vec3 pos, glm::vec3 dir) : _pos(pos), _dir(dir) {}
-	
-	/*! Ray Location
+
+	/*!	
 	 * Returns the ray location at the specified time.
 	 * @param[in] t Time
 	 * @return Position of ray
@@ -34,7 +34,7 @@ public:
 		return _pos + t * _dir;
 	}
 
-	/*! Ray Direction
+	/*!
 	 * Returns the direction the ray is pointing in.
 	 * @return Direction of ray
 	 */

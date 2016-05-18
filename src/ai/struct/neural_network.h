@@ -5,7 +5,7 @@
 
 namespace chess {
 
-/*! Represents a single neuron in a neural network.
+/*!
  * Neurons are generalized linear model machines. They evaluate the linear
  * combination of a set of weights and some inputs, add a bias term and then 
  * run the output through a differentiable, monotonic, and bounded activation
@@ -15,27 +15,32 @@ namespace chess {
 struct Neuron {
 	std::vector<double> weights;
 
-	/*! Construct Randomized Neuron
+	/*!
 	 * Constructs a neuron with randomized weights that accepts ninputs. The
 	 * Neuron will have ninputs + 1 weights (additional bias term).
+	 * @param[in] ninputs Number of inputs to neuron.
 	 */			
 	Neuron(int ninputs);
 
-	/*! Construct Predetermined Neuron
+	/*!
 	 * Constructs a neuron with predetermined weights. The last weight in the
 	 * vector is considered to be a bias weight.
+	 * @param[in] weights Weight vector.
 	 */				 
 	Neuron(std::vector<double> weights) : weights(weights) {}
 						
-	/*! Evaluate Action Potential
+	/*!
 	 * Evaluates the action potential of the Neuron over the specified input
 	 * terms. Performs linear combination and runs output through sigmoid.
+	 * @param[in] in Input values.
+	 * @return Action potential.
 	 */					
 	double eval(const std::vector<double>& in);
 };
 
-/*! Feed-forward Neural Network.
- * Simple single-threaded MLP trained via backpropagation.
+/*!
+ * This class represents a simple, single-threaded multilayer perceptron. This
+ * feed-forward neural network is trained via backpropagation of errors.
  */
 class NeuralNetwork {		
 private:

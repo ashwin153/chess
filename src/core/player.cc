@@ -1,6 +1,7 @@
 #include "player.h"
 #include "piece.h"
 #include "game.h"
+
 #include <vector>
 #include <algorithm>
 #include <iostream>

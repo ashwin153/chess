@@ -15,7 +15,7 @@
 
 namespace chess {
 
-/*! Shader Uniforms
+/*!
  * This class represents the uniforms accepted by the GL Shader Program.
  * This removes the dependency between C++ code that uses uniforms and the
  * GLSL code that defines them.
@@ -35,7 +35,7 @@ enum class Uniform {
 	kSampler, 			// Texture Sampler
 };
 
-/*! GLSL Shader
+/*!
  * This class abstracts away the compilation and management of GLSL Shaders. 
  * Shaders cannot be modified after they are created. Shaders should save
  * information about their state so that they can be queried later.
@@ -45,7 +45,7 @@ private:
 	GLuint _id;
 
 public:
-	/*! Create Shader
+	/*!
 	 * Creates a shader of the specified type, from the source file specified
 	 * on the path. Compiles the shaders and runs a quick check to verify that
 	 * compilation was successful.
@@ -54,7 +54,7 @@ public:
 	 */
 	Shader(const GLenum type, const std::string source_path);	
 
-	/*! Remove Shader
+	/*!
 	 * Deletes the shader from OpenGL. This method may be called immediately	
 	 * after linking the program, because, once linked, this shader object
 	 * has no value.
@@ -63,7 +63,7 @@ public:
 		glDeleteShader(_id);
 	}
 
-	/*! Shader ID
+	/*!
 	 * Returns the unique ID number of the Shader used by the ShaderProgram
 	 * during linking to attach the Shaders.
 	 * @return Unique ID number
@@ -73,7 +73,7 @@ public:
 	}
 };
 
-/*! GLSL Shader Program
+/*!
  * This class abstracts away the compilation, linking, and management of GLSL 
  * Shader programs. Shader programs cannot be modified after creation.
  */
@@ -84,7 +84,7 @@ private:
 	Texture* _texture;
 
 public:
-	/* Default Shader Program
+	/*!
 	 * Constructs a shader program from the specified shaders and binds all
 	 * uniforms enumerated in the Uniform enum class above. The Shader Program
 	 * is the primitive unit of rendering.
@@ -93,7 +93,7 @@ public:
 	
 	virtual ~ShaderProgram();
 
-	/*! Program ID
+	/*! 
 	 * Returns the unique shader program ID number associate with this program.
 	 * It is used to attach the program at render time.
 	 * @return Unique program ID
@@ -102,7 +102,7 @@ public:
 		return _id;
 	}
 
-	/*! Find Uniform
+	/*!
 	 * Finds and returns the location of the specified uniform.
 	 * @param[in] uniform Uniform to lookup
 	 * @return Location of uniform
@@ -111,7 +111,7 @@ public:
 		return _uniforms.find(uniform)->second;
 	}
 
-	/*! Render Mesh
+	/*!
 	 * Renders the mesh given the specified frustrum, camera, and light (scene)
 	 * parameters. Binds the scene parameters to the shader program and then
 	 * calls draw on the mesh.

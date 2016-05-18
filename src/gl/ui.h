@@ -18,7 +18,7 @@
 
 namespace chess {
 
-/*! Chess Window
+/*!
  * This class contains the logic for rendering and interacting with the chess
  * board. It subclasses the familiar GLFW Window object, which allows it to
  * forget about the nasty implementation details that are inevitable when working

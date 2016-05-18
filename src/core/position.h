@@ -7,38 +7,73 @@
 
 namespace chess {
 
-/*! Represents a chess position.
- * Wraps a chess position into a 2 integer pair in which the x
- * coordinate represents the row and the y coordinate represents
- * the column in a 2D array.
+/*!
+ * This struct wraps a chess position into a 2 integer pair in which the x
+ * coordinate represents the row and the y coordinate represents the column in 
+ * a 2D array. This struct also defines the various conversions between chess
+ * positions (rank and file) to the integer values (x, y).
  */
 struct Position {
 	int x, y;
 
-	/*! By default set x and y to 0 */
+	/*! 
+	 * Construct a default position, in which the x and y coordinates are both
+	 * set to zero. This corresponds to position a8 on a chess board. 
+	 */
 	Position() : Position(0, 0) {}
 
-	/*! Specify a position in x (row), y (col) coordinates. */
+	/*! 
+	 * Construct a position with the specified x, y coordinates.
+	 * @param[in] x Row coordinate.
+	 * @param[in] y Column coordinate.
+	 */
 	Position(int x, int y) : x(x), y(y) {}
 
-	/*! Specify a position in algebraic chess notation (e.g. e4) */
+	/*!
+	 * Construct a position from algebraic chess notation (e.g. e4). Converts 
+	 * the algebraic chess position to the internal x,y coordinate system.
+	 * @param[in] file Corresponds to y coordinate.
+	 * @param[in] rank Corresponds to x coordinate.
+	 */
 	Position(char file, int rank) : x(8-rank), y(file-'a') {}
 
-	/*! Specify a position in algebraic chess notation as string */
+	/*! 
+	 * Construct a position from an algebraic chess notation string. Extracts
+	 * the character file and integer rank from the string.
+	 * @param[in] string Algebraic chess notation string.
+	 */
 	Position(std::string pos) : Position(pos.at(0), pos.at(1)-'0') {}
 
-	/*! Create a position from an existing position */
+	/*! 
+	 * Construct a position from the specified template position.
+	 * @param[in] pos Position to copy.
+	 */
 	Position(const Position& pos) : x(pos.x), y(pos.y) {}
 
+	/*!
+	 * Returns the rank of the chess position. The rank corresponds to the x
+	 * coordinate of the position.
+	 * @return Rank of position (1-8).
+	 */
 	inline int rank() const {
 		return 8 - x;
 	}
 
+	/*!
+	 * Returns the file of the chess position. The file corresponds to the y
+	 * coordinate of the position.
+	 * @return File of the position (a-h).
+	 */
 	inline char file() const {
 		return 'a' + y;
 	}
 
-	/*! Manhattan Distance */
+	/*! 
+	 * Returns the manhattan distance between this position and the specified
+	 * position. The manhattan distance is the number of tiles between the
+	 * positions (e.g. dist 1,2 and 3, 3 is 3)
+	 * @return Manhattan distance
+	 */
 	inline int dist(const Position& pos) const {
 		return std::abs(pos.x - x) + std::abs(pos.y - y);
 	}

@@ -5,7 +5,7 @@
 
 namespace chess {
 
-/*! Box
+/*!
  * This class represents a rectangular bounding box. It is much cheaper to
  * perform bounding box intersections than triangle mesh intersections.
  */

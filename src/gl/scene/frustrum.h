@@ -6,7 +6,7 @@
 
 namespace chess {
 
-/*! Viewing Frustrum
+/*!
  * "The region of space in the modeled world that may appear on screen" -
  * (Wikipedia) The viewing frustrum looks like a trapezoid parameterized by
  * the location and dimensions of its near and far spliting planes as well
@@ -23,10 +23,10 @@ public:
 	Frustrum(const Window* window, float fov, float near, float far) 
 		: _window(window), _fov(fov), _near(near), _far(far) {}
 
-	/*! Projection Matrix
+	/*!
 	 * Calculates and returns the perspective projection for this viewing
 	 * frusturm. Wraps a call to the glm::perspective function.
-	 * @return Perspective projection matrix
+	 * @return Perspective projection matrix.
 	 */
 	inline glm::mat4 projection_matrix() const {
 		return glm::perspective(

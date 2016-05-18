@@ -1,4 +1,5 @@
 #include "neural_network.h"
+
 #include <stdlib.h>
 #include <time.h>
 #include <cmath>

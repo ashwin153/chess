@@ -2,25 +2,25 @@
 #define AI_ENGINE_H
 
 #include "core/move.h"
+
 #include <set>
 
 namespace chess {
 
-/*! Represents a chess engine.
- * The goal is to make this chess engine is modular as possible
- * so that various statistical and machine learning techniques
- * can be easily applied. The goal of the engine is, given a
- * chess board, it should be able to decide the best next move.
+/*! 
+ * This class represents a chess engine. The goal is to make chess engines as 
+ * modular as possible so that various statistical and machine learning 
+ * techniques can be implemented as tested with minimal code changes. The goal 
+ * of any engine is to select the optimal move given a set of candidates.
  */
 struct Engine {	
-
-	/*! Move selection
+	/*!
 	 * The goal of any chess engine is to decide what the best possible move
-	 * is given the current state of the board. While the manner in which
-	 * chess engines determine the optimal move may be different, the ultimate
-	 * goal is the same.
-	 * @param[in] moves Candidate moves
-	 * @return Optimal move
+	 * given a set of candidate moves and a current board positions. While
+	 * different chess engines select this optimal move differently, all chess
+	 * engines share the same ultimate goal.
+	 * @param[in] moves Candidate moves.
+	 * @return Optimal move.
 	 */
 	virtual Move select(std::set<Move> moves) = 0;
 

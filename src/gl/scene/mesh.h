@@ -12,7 +12,7 @@
 
 namespace chess {
 
-/*! Triangle Mesh
+/*!
  * Represents a non-deformable triangle mesh. Because meshes may not be
  * modified after creation, vertex and face normals can be pre-computed to
  * make rendering significantly less expensive. Meshes are rendering primitives.
@@ -37,16 +37,17 @@ private:
 	std::vector<Triangle*> _triangles;
 
 public:	
-	/*! Construst a mesh from an .obj file
-	 * Creates a mesh, calculates normals, and setups the vertex array
-	 * and vertex buffer objects to prepare for rendering.
+	/*! 
+	 * Construst a mesh from an .obj file. Creates a mesh, calculates normals, 
+	 * and setups the vertex array and vertex buffer objects to prepare for 
+	 * rendering.
 	 */
 	Mesh(const std::string& path);
 
 	/*! Deletes VAO and all VBO's */
 	virtual ~Mesh();
 
-	/*! Vertex Array Object
+	/*!
 	 * Returns the vertex array object associated with this mesh. This is used
 	 * to bind the mesh to the shader/GPU at render time.
 	 * @return Vertex array object
@@ -55,7 +56,7 @@ public:
 		return _vao[0];
 	}
 
-	/*! Number of Vertices
+	/*!
 	 * Returns the number of vertices in this mesh.
 	 * @return Number of vertices in the mesh
 	 */
@@ -63,7 +64,7 @@ public:
 		return _vertices.size();
 	}
 
-	/*! Number of Faces
+	/*!
 	 * Returns the number of triangles in this mesh.
 	 * @return Number of triangles in the mesh
 	 */
@@ -71,7 +72,7 @@ public:
 		return _faces.size();
 	}
 
-	/*! Bounding Box
+	/*!
 	 * Returns a bounding box around all faces in this mesh.
 	 * @return Bounding box around all faces
 	 */
@@ -79,7 +80,7 @@ public:
 		return _bounds;
 	}
 
-	/*! Center of Mess
+	/*!
 	 * Returns the center of mass for this mesh.
 	 * @return Center of mass
 	 */
@@ -87,7 +88,7 @@ public:
 		return _center;
 	}
 
-	/*! Model Matrix
+	/*!
 	 * Returns the model matrix required to transform coordinates in model space
 	 * to coordinates in world space.
 	 * @return Model matrix
@@ -96,7 +97,7 @@ public:
 		return glm::scale(_mesh2world, glm::vec3(0.05f, 0.05f, 0.05f));
 	}
 
-	/*! Apply Transformation
+	/*!
 	 * Applies the specified transformation to the model matrix of this mesh.
 	 * Used to rotate, scale, and translate objects.
 	 * @param[in] tform Transformation
@@ -105,7 +106,7 @@ public:
 		_mesh2world = tform * _mesh2world;
 	}
 
-	/*! Collision Detection
+	/*!
 	 * Find the minimum point of collision between the specified ray and
 	 * this mesh. Wraps a call to the internal BVH.
 	 * @param[in] ray Intersection ray

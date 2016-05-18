@@ -6,7 +6,7 @@
 
 namespace chess {
 
-/*! Perlin Noise
+/*!
  * This class is used to calculate Perlin Noise. It is almost identical to
  * Ken Perlin's reference implementation (http://cs.nyu.edu/~perlin/noise/),
  * except that I ported his Java code over to C++.
@@ -20,25 +20,25 @@ private:
 	float grad(int hash, float x, float y, float z) const;
 
 public:
-	/*! Construct default Perlin Noise
+	/*!
 	 * Constructs a default perlin noise object that uses the permutation
 	 * provided by Ken Perlin in his reference implementation of Perlin Noise.
 	 */
 	PerlinNoise();
 	
-	/*! Construct randomized Perlin Noise
+	/*!
 	 * Constructs a perlin noise object that uses a randomized permutation
 	 * instead of the permutation provided by Ken Perlin.
 	 */
 	PerlinNoise(unsigned int seed);
 
-	/*! Noise
+	/*!
 	 * Calculates the noise at the specified coordinates.
 	 * @return Perlin Noise
 	 */
 	float noise(glm::vec3 coord) const;
 };
 
-}
+} // namespace chess
 
 #endif // GL_NOISE_H
