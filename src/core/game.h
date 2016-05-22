@@ -20,7 +20,9 @@ class Game {
 private:
 	Player* _white;
 	Player* _black;
-	std::vector<Move> _moves;
+
+	std::vector<Move> _history;
+	std::set<Move> _valid;
 	int _turn;
 
 	/*! Active Player
@@ -46,17 +48,11 @@ public:
 	 */
 	Game(std::vector<Move> history);
 
-	/*! Construct Game from PGN
-	 * Constructs  a Chess game from the specified PGN string. This method should
-	 * be relatively resiliant to valid PGN input.
-	 */
-	Game(const std::string& pgn);
-
 	/*! Copy Game
 	 * Copies and replays the move history of the specified game. This will,
 	 * in effect, create a deep copy of the game.
 	 */
-	Game(const Game& game) : Game(game._moves) {}
+	Game(const Game& game) : Game(game._history) {}
 
 	/*! Destruct Game
 	 * Destroys the game; deletes its move history and removes its players.
@@ -81,8 +77,16 @@ public:
 	 * maintains the current state of the game and returns false.
 	 * @return True if successful move, False otherwise
 	 */
-	void make(const Move& move);
-	
+	bool make(const Move& move);
+
+	/*! Make Move PGN
+	 * Attempts to convert the PGN string into a valid move. Returns true and
+	 * makes the specified move if possible and returns false if the conversion
+	 * failed or no such move was possible.
+	 * @return True if successful, False otherwise.
+	 */
+	bool make(const std::string& pgn);
+
 	/*! Stringify
 	 * Returns a string representation of the game. This is used to display the
 	 * current state of the game, but should not be used to infer information
@@ -98,7 +102,7 @@ public:
 	 * @return Playable moves
 	 */
 	inline std::set<Move> moves() {
-		return moves<Piece>();
+		return _valid;
 	}
 
 	/*! Playable Moves of Type
