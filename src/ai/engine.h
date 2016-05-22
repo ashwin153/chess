@@ -1,7 +1,8 @@
 #ifndef AI_ENGINE_H
 #define AI_ENGINE_H
 
-#include "../core/game.h"
+#include "core/move.h"
+#include <set>
 
 namespace chess {
 
@@ -18,10 +19,10 @@ struct Engine {
 	 * is given the current state of the board. While the manner in which
 	 * chess engines determine the optimal move may be different, the ultimate
 	 * goal is the same.
-	 * @param[in] game Chess game
+	 * @param[in] moves Candidate moves
 	 * @return Optimal move
 	 */
-	virtual Move select(const Game& game) = 0;
+	virtual Move select(std::set<Move> moves) = 0;
 
 };
 
