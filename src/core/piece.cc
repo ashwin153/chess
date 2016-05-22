@@ -96,7 +96,9 @@ bool King::move(const Position& pos) {
 }
   
 bool King::isValid(const Position& pos) {
-	return Piece::isValid(pos);
+	// The king may castle if it and the rock have no moved,
+	// and it may not castle out of, into, or through check.
+	return Piece::isValid(pos) && pos.dist(this->loc()) == 1;
 }
 
 }
