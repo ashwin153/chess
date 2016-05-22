@@ -1,37 +1,47 @@
-# Select compiler 
+# Select compiler, flags and source properties
 CC := g++
+CFLAGS := -std=c++11 -g -Wall #-Werror
+LFAGS  := -L/usr/local -L lib
+SRCEXT := cc
 
-# Source, build and output locations
-SRCDIR := src
-BUILDDIR := build
+# Production: source, build, include and output locations
+SRC := src
 BIN := bin
+INC := -I include -I .
+LIB := -lglfw3 -lglew -framework OpenGL
+BUILD := build
 TARGET := $(BIN)/chess
 
-SRCEXT := cc
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-OBJECTS := $(patsubst $(SRCDIR)/%.$(SRCEXT),$(BUILDDIR)/%.o,$(SOURCES))
+# Testing: source, build, include, and output locations
+TEST := test
+TLIB := $(LIB) -pthread -L lib -lgmock
+TESTER := $(BIN)/tester
 
-CFLAGS := -std=c++11 -g -Wall -Werror
-LIB := -L/usr/local -lglfw3 -lglew -framework OpenGL
-INC := -I include
+# Load sources and objects
+SOURCES := $(shell find $(SRC) -type f -name *.$(SRCEXT))
+OBJECTS := $(patsubst $(SRC)/%.$(SRCEXT),$(BUILD)/%.o,$(SOURCES))
+TESTS	:= $(shell find $(TEST) -type f -name *.$(SRCEXT))
 
-# Linker
+# All
+all: $(TARGET)
+
+# Linker (bin/chess)
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BIN)
-	$(CC) $^ -o $@ $(LIB)
+	$(CC) $^ -o $@ $(LFLAG) $(LIB)
 
-# Make object files
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(BUILDDIR)
+# Compile (*.o)
+$(BUILD)/%.o: $(SRC)/%.$(SRCEXT)
+	@mkdir -p $(BUILD)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 # Clean
 clean:
-	$(RM) -r $(BUILDDIR) $(TARGET)
+	$(RM) -r $(BUILD) $(BIN)
 
-# Test
-test:
-	$(CC) $(CFLAGS) test/test.cpp $(INC) $(LIB) -o bin/test
+# Tester
+tester:
+	$(CC) $(CFLAGS) $(TESTS) $(OBJECTS) $(INC) $(LFLAG) $(TLIB) -o $(TESTER)
 
 .PHONY: clean

@@ -7,3 +7,29 @@ This project is my first large scale C++ project that attempts to incorporate va
 - Testability: Learn C++ testing frameworks and thoroughly test code.
 - Documentation: Learn how to properly document C++ code.
 - Design: Create a well designed object-oriented program.
+
+# Build (Mac OSX)
+## Graphics Dependencies
+```
+brew install glfw3
+brew install glew
+```
+
+## Testing Dependencies
+### GoogleMock + GoogleTest
+```
+brew install autoconf
+git clone https://github.com/google/googletest.git
+cd googletest/googlemock
+
+autoreconf -fvi
+./configure
+
+g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c ../googletest/src/gtest-all.cc 
+g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c src/gmock-all.cc 
+ar -rv libgmock.a gtest-all.o gmock-all.o
+
+mv libgmock.a lib
+make
+make check
+```
