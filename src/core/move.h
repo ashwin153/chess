@@ -79,7 +79,7 @@ private:
 	 */
 	template <class T>
 	inline void hash_combine(std::size_t& seed, const T& v) const {
-    	seed ^= hash<T>()(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+    	seed ^= hash<T>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 	}
 
 public:
