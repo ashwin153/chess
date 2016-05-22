@@ -1,5 +1,5 @@
-#ifndef POSITION_H
-#define POSITION_H
+#ifndef CORE_POSITION_H
+#define CORE_POSITION_H
 
 #include <cstdlib>
 #include <string>
@@ -103,4 +103,4 @@ inline Position operator*(const double rhs, Position lhs) {
 
 } // namespace chess
 
-#endif // POSITION_H
+#endif // CORE_POSITION_H

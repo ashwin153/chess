@@ -1,5 +1,5 @@
-#ifndef PIECE_H
-#define PIECE_H
+#ifndef CORE_PIECE_H
+#define CORE_PIECE_H
 
 #include "position.h"
 #include "player.h"
@@ -75,7 +75,6 @@ public:
 	Pawn(Player& owner, Position loc) : Piece(owner, loc) {}
 	void move(const Position& pos);
 	bool valid(const Position& pos);
-	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♙" : "♟";
 	}
@@ -88,7 +87,6 @@ class Knight : public Piece {
 public:
 	Knight(Player& owner, Position loc) : Piece(owner, loc) {}
 	bool valid(const Position& pos);
-	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♘" : "♞";
 	}
@@ -101,9 +99,8 @@ class Bishop : virtual public Piece {
 public:
 	Bishop(Player& owner, Position loc) : Piece(owner, loc) {}
 	bool valid(const Position& pos);
-	
 	inline std::string to_string() const {
-		return (owner().is_white()) ? "♙" : "♟";
+		return (owner().is_white()) ? "♗" : "♝";
 	}
 };
 
@@ -114,8 +111,7 @@ public:
 class Rook : virtual public Piece {
 public:
 	Rook(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool valid(const Position& pos);
-	
+	bool valid(const Position& pos);	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♖" : "♜";
 	}
@@ -150,7 +146,6 @@ public:
 	void move(const Position& pos);
 	void undo(const Position& pos);
 	bool valid(const Position& pos);
-	
 	inline std::string to_string() const {
 		return (owner().is_white()) ? "♔" : "♚";
 	}
@@ -158,4 +153,4 @@ public:
  
 } // namespace chess
 
-#endif // PIECE_H
+#endif // CORE_PIECE_H

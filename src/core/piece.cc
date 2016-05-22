@@ -126,10 +126,11 @@ bool Queen::valid(const Position& pos) {
 
 void King::move(const Position& pos) {
 	// Move the rook if castling
-	if (pos.dist(loc()) == 2) {
-		int dir = (pos.y - loc().y) / pos.dist(loc());
-		Piece* rook = owner().piece(Position(pos.x, (dir > 0) * 7));	
-		if (rook) rook->move(pos - Position(0, dir));
+	int dy = pos.y - loc().y;
+	if (std::abs(dy) == 2) {
+		int sy = ((dy>0)-(dy<0));
+		Piece* rook = owner().piece(Position(pos.x, (sy > 0) * 7));	
+		if (rook) rook->move(pos - Position(0, sy));
 	}
 
 	// Otherwise move normally
@@ -138,10 +139,11 @@ void King::move(const Position& pos) {
 
 void King::undo(const Position& pos) {
 	// Move the rook if castling
-	if (pos.dist(loc()) == 2) {
-		int dir = (loc().y - pos.y) / pos.dist(loc());
-		Piece* rook = owner().piece(pos - Position(0, dir));
-		if (rook) rook->undo(Position(pos.x, (dir > 0) * 7));	
+	int dy = pos.y - loc().y;
+	if (std::abs(dy) == 2) {
+		int sy = ((dy>0)-(dy<0));
+		Piece* rook = owner().piece(pos - Position(0, sy));
+		if (rook) rook->undo(Position(pos.x, (sy < 0) * 7));	
 	}
 
 	// Otherwise undo normally
@@ -158,7 +160,7 @@ bool King::valid(const Position& pos) {
 	
 	// The king may move twice horizontally to castle
 	if (dx == 0 && dy == 2) {
-		bool kingside = dy > 0;
+		bool kingside = (pos.y - loc().y) > 0;
 		Piece* rook   = owner().piece(Position(pos.x, kingside * 7));
 		Position adj  = Position(0, kingside * 2 - 1); 
 		
@@ -167,10 +169,9 @@ bool King::valid(const Position& pos) {
 			owner().in_check(Move(loc(), loc())) || 
 			owner().in_check(Move(loc(), loc() + adj)))
 			return false;
-
 	
 		// Check that all positions between the king and rook are empty
-		for (int i = 0; i <= 3 - kingside; i++)
+		for (int i = 1; i <= 3 - kingside; i++)
 			if (owner().piece(loc() + i * adj) ||
 				owner().opponent()->piece(loc() + i * adj))
 				return false;

@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef CORE_PLAYER_H
+#define CORE_PLAYER_H
 
 #include "position.h"
 #include <vector>
@@ -76,4 +76,4 @@ public:
 
 } // namespace chess
 
-#endif // PLAYER_H
+#endif // CORE_PLAYER_H

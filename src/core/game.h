@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef CORE_GAME_H
+#define CORE_GAME_H
 
 #include "player.h"
 #include "piece.h"
@@ -72,4 +72,4 @@ public:
 
 } // namespace chess
 
-#endif // GAME_H
+#endif // CORE_GAME_H
