@@ -1,5 +1,5 @@
 #include "shader.h"
-#include <ifstream>
+#include <fstream>
 
 namespace chess {
 
@@ -13,40 +13,40 @@ Shader::Shader(GLenum type, std::string source_path) : type(type) {
 
 	// Create and compile the shader
 	id = glCreateShader(type);
-	glShaderSource(id, 1, &source.c_str(), nullptr);
+	const char* src = source.c_str();
+	glShaderSource(id, 1, &src, nullptr);
 	glCompileShader(id);
 }
 
 ShaderProgram::ShaderProgram(std::vector<Shader> shaders, 
-		std::vector<std::string> attrib_names,
-		std::vector<std::string> data_names,
 		std::vector<std::string> uniform_names) : shaders(shaders) {
 
+	// Create the shader program
 	id = glCreateProgram();
 
 	// Attach all shaders
 	for (Shader shader : shaders)
 		glAttachShader(id, shader.id);
 	
-	// Bind vertex attributes
-	for (int i = 0; i < attrib_names.size(); i++)
-		inputs.insert({attrib_names[i], 
-			glBindAttribLocation(id, i, attrib_names[i])});
-	
-	// Bind fragment data locations
-	for (int i = 0; i < data_names.size(); i++)
-		outputs.insert({data_names[i],
-			glBindFragDataLocation(id, i, data_names[i])});
+	// Bind vertex attributes and fragment data
+	glBindAttribLocation(id, 0, "vertex_position");
+	glBindAttribLocation(id, 1, "vertex_normals");
+	glBindAttribLocation(id, 2, "face_normals");
+	glBindFragDataLocation(id, 0, "fragment_color");
 
+	// Link Program
 	glLinkProgram(id);
 
 	// Get uniform locations
 	for (std::string uniform : uniform_names)
-		uniforms.insert({uniform, glGetUniformLocation(id, uniform)});
+		uniforms.insert({uniform, glGetUniformLocation(id, uniform.c_str())});
 }
 
-ShaderProgram::uniform(std::string uniform_name) {
-	return uniforms.find(uniform_name);
+int ShaderProgram::uniform(std::string uniform_name) const {
+	auto iter =  uniforms.find(uniform_name);
+	if (iter != uniforms.end())
+		return iter->second;
+	return -1;
 }
 
 } // namespace chess

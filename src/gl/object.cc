@@ -1,5 +1,5 @@
 #include "object.h"
-#include <ifstream>
+#include <fstream>
 
 namespace chess {
 
@@ -51,6 +51,58 @@ Object::Object(std::string object_path) {
 
 	for (int i = 0; i < vertices.size(); i++)
 		vertex_normals[i] /= vertex_counts[i];
+
+	// Setup the vertex array and vertex buffer objects
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glGenBuffers(3, &vbo[0]);
+
+	// Bind vertices
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 
+		sizeof(float) * vertices.size() * 4, 
+		&vertices[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Bind faces
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
+		sizeof(uint32_t) * faces.size() * 3,
+		&faces[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_UNSIGNED_INT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	// Bind vertex normals
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, 
+		sizeof(float) * vertex_normals.size() * 3,
+		&vertex_normals[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);	
+
+	// Bind face normals
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+	glBufferData(GL_ARRAY_BUFFER, 
+		sizeof(float) * face_normals.size() * 3,
+		&face_normals[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+Object::~Object() {
+	glDeleteBuffers(4, &vbo[0]);
+	glDeleteVertexArrays(1, &vao);
+}
+
+void Object::render() {
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, faces.size() * 3, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }
 
 } // namespace chess

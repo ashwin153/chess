@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	// Rendering loop
 	while (!glfwWindowShouldClose(glfw_window)) {
 		// Clear window and setup basic components
-		glfwGetFramebufferSize(glfw_window, &window.width, &window.height);
+		// glfwGetFramebufferSize(glfw_window, &window.width, &window.height);
 		glViewport(0, 0, window.width, window.height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glEnable(GL_DEPTH_TEST);
