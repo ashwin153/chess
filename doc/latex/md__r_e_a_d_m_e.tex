@@ -8,5 +8,43 @@ This project is my first large scale C++ project that attempts to incorporate va
 \item Efficiency\+: Utilize efficient algorithms and rendering techniques.
 \item Testability\+: Learn C++ testing frameworks and thoroughly test code.
 \item Documentation\+: Learn how to properly document C++ code.
-\item Design\+: Create a well designed object-\/oriented program. 
+\item Design\+: Create a well designed object-\/oriented program.
 \end{DoxyItemize}
+
+\section*{Build (Mac O\+SX)}
+
+\subsection*{System Configuration}
+
+
+\begin{DoxyItemize}
+\item Compiler\+: clang-\/700.\+1.\+81
+\item Operating System\+: Mac O\+SX x86\+\_\+64 \#\# Graphics Dependencies 
+\begin{DoxyCode}
+1 brew install glfw3
+2 brew install glew
+\end{DoxyCode}
+
+\end{DoxyItemize}
+
+\subsection*{Testing Dependencies}
+
+\#\#\# Google\+Mock + Google\+Test 
+\begin{DoxyCode}
+1 brew install autoconf
+2 git clone https://github.com/google/googletest.git
+3 cd googletest/googlemock
+4 
+5 autoreconf -fvi
+6 ./configure
+7 
+8 g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c ../googletest/src/gtest-all.cc 
+9 g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c src/gmock-all.cc 
+10 ar -rv libgmock.a gtest-all.o gmock-all.o
+11 
+12 mv libgmock.a lib
+13 make
+14 make check
+\end{DoxyCode}
+
+
+Move the libgmock.\+a file into the lib directory. When you build against googlemock, you are also building against googletest. Therefore, it is unnecessary to also build the googletest library. 

@@ -16,25 +16,27 @@ public:
 	Matrix(int nrow, int ncol);
 	~Matrix();
 
-	int rank();
-	double det();
-	double trace();
+	int rank() const;
+	double det() const;
+	double trace() const;
 
 	Matrix* inverse();
 	Matrix* transpose();
 
-/*
-	Matrix operator+(const Matrix& rhs);
-	Matrix operator-(const Matrix& rhs);
-	Matrix operator*(Matrix lhs, const double& scalar);
-	Matrix operator*(const double& scalar, Matrix rhs);
-	Matrix operator*(Matrix lhs, Matrix rhs);
 	Matrix operator+=(const Matrix& rhs);
 	Matrix operator-=(const Matrix& rhs);
 	Matrix operator*=(const Matrix& rhs);
 	Matrix operator*=(const double& scalar);
-*/
+
+	bool operator==(const Matrix& rhs) const;
+	bool operator!=(const Matrix& rhs) const;
 };
+
+Matrix operator+(Matrix lhs, const Matrix& rhs);
+Matrix operator-(Matrix lhs, const Matrix& rhs);
+Matrix operator*(Matrix lhs, const Matrix& rhs);
+Matrix operator*(const double& lhs, Matrix rhs);
+Matrix operator*(Matrix lhs, const double& rhs);
 
 }
 

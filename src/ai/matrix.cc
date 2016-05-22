@@ -2,4 +2,4 @@
 
 namespace ai {
 
-}
+} // namespace ai

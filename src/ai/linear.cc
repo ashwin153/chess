@@ -31,4 +31,4 @@ double LinearRegression::predict(const double& x) {
 	return _alpha + _beta * x;
 }
 
-}
+} // namespace ai

@@ -39,4 +39,4 @@ std::vector<double> NeuralNetwork::predict(const std::vector<double>& in) {
 	return std::vector<double>();
 }
 
-}
+} // namespace ai

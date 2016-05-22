@@ -9,6 +9,8 @@ This project is my first large scale C++ project that attempts to incorporate va
 - Design: Create a well designed object-oriented program.
 
 # Build (Mac OSX)
+Building project requires [Homebrew](http://brew.sh/).
+
 ## Graphics Dependencies
 ```
 brew install glfw3
@@ -16,7 +18,7 @@ brew install glew
 ```
 
 ## Testing Dependencies
-### GoogleMock + GoogleTest
+### GoogleMock and GoogleTest
 ```
 brew install autoconf
 git clone https://github.com/google/googletest.git
@@ -33,3 +35,5 @@ mv libgmock.a lib
 make
 make check
 ```
+
+Next, move the libgmock.a file into the lib/ directory of this project. Note that building against googlemock *also builds against googletest*.

@@ -86,8 +86,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>Efficiency: Utilize efficient algorithms and rendering techniques.</li>
 <li>Testability: Learn C++ testing frameworks and thoroughly test code.</li>
 <li>Documentation: Learn how to properly document C++ code.</li>
-<li>Design: Create a well designed object-oriented program. </li>
+<li>Design: Create a well designed object-oriented program.</li>
 </ul>
+<h1>Build (Mac OSX)</h1>
+<h2>System Configuration</h2>
+<ul>
+<li>Compiler: clang-700.1.81</li>
+<li>Operating System: Mac OSX x86_64 ## Graphics Dependencies <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;brew install glfw3</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;brew install glew</div></div><!-- fragment --></li>
+</ul>
+<h2>Testing Dependencies</h2>
+<p>### GoogleMock + GoogleTest </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;brew install autoconf</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;git clone https://github.com/google/googletest.git</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;cd googletest/googlemock</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;autoreconf -fvi</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;./configure</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c ../googletest/src/gtest-all.cc </div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;g++ -I../googletest/include -I../googletest/ -Iinclude -I. -c src/gmock-all.cc </div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;ar -rv libgmock.a gtest-all.o gmock-all.o</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;mv libgmock.a lib</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;make</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;make check</div></div><!-- fragment --><p>Move the libgmock.a file into the lib directory. When you build against googlemock, you are also building against googletest. Therefore, it is unnecessary to also build the googletest library. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

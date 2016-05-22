@@ -67,6 +67,6 @@ inline Position operator-(Position lhs, const Position& rhs) {
 	return lhs -= rhs;
 }
 
-}
+} // namespace chess
 
-#endif
+#endif // CORE_POSITION_H
