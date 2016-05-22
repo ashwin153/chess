@@ -21,7 +21,7 @@ TEXE := $(BIN)/tester
 SOURCES := $(shell find $(SRC) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRC)/%.$(SRCEXT),$(BUILD)/%.o,$(SOURCES))
 TESTS	:= $(shell find $(TEST) -type f -name *.$(SRCEXT))
-TESTOBJ := $(filter-out $(BUILD)/gl/main.o, $(OBJECTS))
+TESTOBJ := $(filter-out $(BUILD)/chess-textual.o, $(OBJECTS))
 
 # All
 all: $(TARGET)
