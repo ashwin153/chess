@@ -6,8 +6,9 @@
 
 namespace chess {
 
-// Forward declaration of Piece to resolve circular dependencies
+/* Forward declaration resolves circular dependencies */
 class Piece;
+class King;
 
 /*! Represents a chess game player.
  * Players have sets of live and dead pieces as well as an
@@ -16,41 +17,42 @@ class Piece;
  */
 class Player {
 private:
-	std::vector<Piece*> _live;
-	std::vector<Piece*> _dead;
+	std::vector<Piece*> _pieces;
 	Player* _opponent;
+	King* _king;
 	bool _is_white;
 
-public:
-	/*! Creates a default player. */
-	Player() : _opponent(nullptr), _is_white(false) {}
-	
-	/*! Creates a default player of the specified color. */
-	Player(bool is_white);
+protected:
+	/*! Protected default constructor.
+	 * Used solely to create mocked player objects. Typing the protected
+	 * label hurts my soul - I'm a firm believer that it has no place in
+	 * well designed object oriented code. However, in this case it allows
+	 * for less interdependent unit tests and higher testability is something
+	 * I can always get behind.
+	 */
+	Player() : _opponent(nullptr), _king(nullptr), _is_white(false) {}
 
-	/*! Creates a default player with the specified opponent. */
+public:
+	Player(bool is_white);
 	Player(Player* opponent);
-	
 	virtual ~Player();
 
-	inline bool is_white() { return _is_white; }
-	inline Player* opponent() { return _opponent; }
+	/*! Returns the color of the player. */
+	virtual bool is_white();
+
+	/*! Returns the player's opponent. */
+	virtual Player* opponent();
+
+	/*! Returns whether or not the player is currently in check. */
+	virtual bool in_check();
 
 	/*! Returns the live piece at the specified position.
 	 * @param[in] pos Position
 	 * @return Point to piece or nullptr if no such piece exists.
 	 */
 	virtual Piece* piece(const Position& pos);
-
-	/*! Captures the specified piece.
-	 * Moves the piece to the dead set if it exists in the live set.
-	 * @param[in] piece Captured piece
-	 * @return True if capture was successful, false otherwise.
-	 */
-	virtual bool capture(Piece* piece);
-
 };
 
-}
+} // namespace chess
 
 #endif // CORE_PLAYER_H

@@ -2,17 +2,59 @@
 
 namespace chess {
 
+Player& Piece::owner() {
+	return _owner;
+}
+
+Position Piece::loc() {
+	return _loc;
+}
+
+bool Piece::has_moved() {
+	return _has_moved;
+}
+
+bool Piece::is_alive() {
+	return _is_alive;
+}
+
 bool Piece::move(const Position& pos) {
-	return false;
+	// If the position is invalid, do not move
+	if (!isValid(pos))
+		return false;
+
+	// Move the piece to the specified position
+	_loc = pos;
+	
+	// Capture any opposing pieces
+	Piece* piece = owner().opponent()->piece(pos);
+	if (piece != nullptr) piece->_is_alive = false;
+	
+	return true;
 }
 
 bool Piece::isValid(const Position& pos) {
 	// Verify that the position is within bounds and that
 	// the owner of this piece does not contain a piece of the
 	// same color at the specified position.
-	return pos.x >= 0 && pos.x < 8 &&
-		pos.y >= 0 && pos.y < 8 &&
-		owner().piece(pos) == nullptr;
+	if (!(owner().piece(pos) == nullptr &&
+		pos.x >= 0 && pos.x < 8 &&
+		pos.y >= 0 && pos.y < 8))
+		return false;
+
+	// Verify that movement to the specified position does not
+	// place the king in check. Save the current positions of
+	// impacted pieces, move the piece, determine if in check,
+	// and then reset the original pieces.
+	Piece* piece = owner().opponent()->piece(pos);
+	if (piece != nullptr) piece->_is_alive = false;
+	Position old = _loc;
+	_loc = pos;
+	
+	bool in_check = owner().in_check();
+	if (piece != nullptr) piece->_is_alive = true;
+	_loc = old;
+	return !in_check;
 }
 
 bool Pawn::isValid(const Position& pos) {
@@ -21,13 +63,18 @@ bool Pawn::isValid(const Position& pos) {
 	// White pawns move up the board, and black pawns move down.	
 	int dir = owner().is_white() ? -1 : 1;
 
-	// Pawns may always move forward
-	if (pos - this->loc() == Position(dir, 0)) return true;
+	// Pawns may always move forward unless there is an opposing
+	// piece already occupying that position.
+	if (pos - this->loc() == Position(dir, 0) &&
+		owner().opponent()->piece(pos) == nullptr) 
+		return true;
 
 	// Pawns may move forward twice unless moving twice would
 	// prevent a capture (en passant). Otherwise, the pawn may
 	// only move once.
 	if (pos - this->loc() == Position(2*dir, 0) && !has_moved() &&
+		owner().opponent()->piece(pos) == nullptr &&
+		owner().opponent()->piece(pos - Position(dir, 0)) == nullptr &&
 		owner().opponent()->piece(this->loc() + Position(2*dir, +1)) == nullptr &&
 		owner().opponent()->piece(this->loc() + Position(2*dir, -1)) == nullptr)
 		return true;

@@ -2,6 +2,7 @@
 #define CORE_POSITION_H
 
 #include <cstdlib>
+#include <string>
 
 namespace chess {
 
@@ -17,7 +18,7 @@ struct Position {
 	Position(int x, int y) : x(x), y(y) {}
 
 	/*! Specify a position in algebraic chess notation (e.g. e4) */
-	Position(char file, int rank) : x(rank-1), y(file-'a') {}
+	Position(char file, int rank) : x(8-rank), y(file-'a') {}
 
 	/*! Create a position from an existing position */
 	Position(const Position& pos) : x(pos.x), y(pos.y) {}
@@ -59,6 +60,13 @@ struct Position {
 	}
 };
 
+/* Why define certain operator overloads as non-member functions?
+ * Because the compiler interprets member operator overloads as
+ * member functions (s + t -> s.operator+(t)). Defining operators
+ * as non-member functions solves this ordering problem. Note, if the
+ * operator needs access to private variables, then it must be declared
+ * as a friend function.
+ */
 inline Position operator+(Position lhs, const Position& rhs) {
 	return lhs += rhs;
 }
