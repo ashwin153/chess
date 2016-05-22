@@ -9,6 +9,7 @@ namespace chess {
 /* Forward declaration resolves circular dependencies */
 class Piece;
 class King;
+struct Move;
 
 /*! Represents a chess game player.
  * Players have sets of live and dead pieces as well as an
@@ -39,19 +40,28 @@ public:
 	virtual ~Player();
 
 	/*! Returns the color of the player. */
-	virtual bool is_white();
+	inline virtual bool is_white() const {
+		return _is_white;
+	}
 
 	/*! Returns the player's opponent. */
-	virtual Player* opponent();
+	inline virtual Player* opponent() const {
+		return _opponent;
+	}
 
-	/*! Returns whether or not the player is currently in check. */
-	virtual bool in_check();
+	/*! Spawns a new live piece (used for promotion). */
+	inline virtual void spawn(Piece* piece) {
+		_live.push_back(piece);
+	}
+
+	/*! Returns whether or not the player is in check after move. */
+	virtual bool in_check(const Move& move);
 
 	/*! Returns the live piece at the specified position.
 	 * @param[in] pos Position
 	 * @return Pointer to piece or nullptr if no such piece exists.
 	 */
-	virtual Piece* piece(const Position& pos);
+	virtual Piece* piece(const Position& pos) const;
 
 	/*! Captures any live piece at the specified location. 
 	 * @param[in] pos Position

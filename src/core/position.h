@@ -20,9 +20,20 @@ struct Position {
 	/*! Specify a position in algebraic chess notation (e.g. e4) */
 	Position(char file, int rank) : x(8-rank), y(file-'a') {}
 
+	/*! Specify a position in algebraic chess notation as string */
+	Position(std::string pos) : Position(pos.at(0), pos.at(1)-'0') {}
+
 	/*! Create a position from an existing position */
 	Position(const Position& pos) : x(pos.x), y(pos.y) {}
-	
+
+	inline int rank() const {
+		return 8 - x;
+	}
+
+	inline char file() const {
+		return 'a' + y;
+	}
+
 	/*! Manhattan distance between positions. */
 	inline int dist(const Position& pos) const {
 		return std::abs(pos.x - x) + std::abs(pos.y - y);

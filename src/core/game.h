@@ -4,6 +4,7 @@
 #include "player.h"
 #include "piece.h"
 #include <vector>
+#include <string>
 
 namespace chess {
 
@@ -15,7 +16,8 @@ namespace chess {
 struct Move {
 	Position cur;
 	Position nxt;
-	
+
+	// PGN Movetext Regex: ^([PNBRQK]?)([a-h]?)([1-8]?)[x]?([a-h][1-8]).*$
 	Move(Position cur, Position nxt) : cur(cur), nxt(nxt) {}
 	Move(const Move& move) : cur(move.cur), nxt(move.nxt) {}
 };
@@ -48,6 +50,9 @@ public:
 	/*! Returns the player whose turn is next. */
 	virtual Player* next() const;
 	
+	/*! Returns a string representation of the current game state. */
+	virtual std::string to_string() const;
+	
 	/*! Steps the turn counter "times" times
 	 * Changes the state of the game to be the state "times" turns forward.
 	 * @param[in] times Number of steps
@@ -60,15 +65,9 @@ public:
 	 */
 	virtual void back(int times);
 
-   	/*! Returns a new chess game with the move made.
-	 * Does not alter the state of the chess board at all. This should make it
-	 * easier to recursively generate games in the AI, because the game is
-	 * an immutable object.
-	 * @param[in] move Next move
-	 * @return New chess game with the move made
-	 */
-	// virtual Chess make(const Move& move) const;
-	virtual Game make(const Move& move) const;
+   	/*! Returns a new chess game with the move made. */
+	virtual bool make(const Move& move);
+
 };
 
 } // namespace chess

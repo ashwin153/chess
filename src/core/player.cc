@@ -1,7 +1,9 @@
 #include "player.h"
 #include "piece.h"
+#include "game.h"
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace chess {
 
@@ -18,9 +20,11 @@ Player::Player(bool is_white) {
 	_live.push_back(new Knight(*this, Position(is_white*7, 6)));
 	_live.push_back(new Rook  (*this, Position(is_white*7, 7)));
 
-	_king = new King(*this, Position(is_white*7, 4));
 	for (int i = 0; i < 8; i++)
 		_live.push_back(new Pawn(*this, Position(is_white*5+1, i)));
+	
+	_king = new King(*this, Position(is_white*7, 4));
+	_live.push_back(_king);
 }
 
 Player::Player(Player* opponent) : Player(!opponent->is_white()) {
@@ -37,38 +41,28 @@ Player::~Player() {
 		delete piece;
 	_live.clear();
 	_dead.clear();
-
-	// Delete the king
-	delete _king;
-	_king = nullptr;
 }
 
-bool Player::is_white() {
-	return _is_white;
+bool Player::in_check(const Move& move) {
+	Piece* ally = piece(move.cur);
+	ally->move(move.nxt);
+	bool in_check = false;
+
+	// Check if any of the opponent's live pieces can move to king 
+	for (auto enemy : _opponent->_live)
+		if (enemy->is_valid(_king->loc()))
+			in_check = true;
+
+	ally->undo(move.cur);
+	return in_check;
 }
 
-Player* Player::opponent() {
-	return _opponent;
-}
-
-bool Player::in_check() {
-	// Check if any of the opponent's live pieces or king  can 
-	// move to the king's position.
-	for (auto piece : _opponent->_live)
-		if (piece->isValid(_king->loc()))
-			return true;
-	return _opponent->_king->isValid(_king->loc());
-}
-
-
-Piece* Player::piece(const Position& pos) {
+Piece* Player::piece(const Position& pos) const {
 	// Search the live pieces for the position
 	for (auto piece : _live)
 		if (piece->loc() == pos)
 			return piece;
-
-	// Check the position of the king
-	return (_king->loc() == pos) ? _king : nullptr;
+	return nullptr;
 }
 
 Piece* Player::capture(const Position& pos) {
@@ -80,7 +74,7 @@ Piece* Player::capture(const Position& pos) {
 			return _dead[_dead.size() - 1];
 		}
 	}
-
+	
 	// If no piece is found, return nullptr	
 	return nullptr;
 }

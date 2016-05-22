@@ -4,6 +4,7 @@
 #include "position.h"
 #include "player.h"
 #include <vector>
+#include <string>
 
 namespace chess {
 
@@ -27,13 +28,24 @@ public:
 	virtual ~Piece() {}
 
 	/*! Returns the player who controls this piece. */
-	Player& owner();
+	inline Player& owner() const {
+		return _owner;
+	}
 
 	/*! Returns the current location of this piece. */
-	Position loc();
+	inline Position loc() const {
+		return _loc;
+	}
 
 	/*! Returns whether or not the piece has been moved. */
-	bool has_moved();
+	inline bool has_moved() const {
+		return _loc != _org;
+	}
+	
+	/*! Returns a string representation of this piece. */
+	inline virtual std::string to_string() const {
+		return " ";
+	}
 
 	/*! Move the piece to the specified position.
 	 * @param[in] pos Position
@@ -49,7 +61,8 @@ public:
      * @param[in] pos Position
 	 * @return True if valid move, false otherwise
 	 */
-	virtual bool isValid(const Position& pos);
+	virtual bool is_valid(const Position& pos);
+
 };
 
 /*! Pawn Piece
@@ -60,7 +73,12 @@ public:
 class Pawn : public Piece {
 public:
 	Pawn(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool isValid(const Position& pos);
+	void move(const Position& pos);
+	bool is_valid(const Position& pos);
+	
+	inline std::string to_string() const {
+		return (owner().is_white()) ? "♙" : "♟";
+	}
 };
 
 /*! Knight Piece
@@ -69,7 +87,11 @@ public:
 class Knight : public Piece {
 public:
 	Knight(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool isValid(const Position& pos);
+	bool is_valid(const Position& pos);
+	
+	inline std::string to_string() const {
+		return (owner().is_white()) ? "♘" : "♞";
+	}
 };
 
 /*! Bishop Piece
@@ -78,7 +100,11 @@ public:
 class Bishop : virtual public Piece {
 public:
 	Bishop(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool isValid(const Position& pos);
+	bool is_valid(const Position& pos);
+	
+	inline std::string to_string() const {
+		return (owner().is_white()) ? "♙" : "♟";
+	}
 };
 
 /*! Rook Piece
@@ -88,7 +114,11 @@ public:
 class Rook : virtual public Piece {
 public:
 	Rook(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool isValid(const Position& pos);
+	bool is_valid(const Position& pos);
+	
+	inline std::string to_string() const {
+		return (owner().is_white()) ? "♖" : "♜";
+	}
 };
 
 /*! Queen Piece
@@ -100,7 +130,11 @@ class Queen : public Rook, public Bishop {
 public:
 	Queen(Player& owner, Position loc) 
 		: Piece(owner, loc), Rook(owner, loc), Bishop(owner, loc) {}
-	bool isValid(const Position& pos);
+	bool is_valid(const Position& pos);
+	
+	inline std::string to_string() const {
+		return (owner().is_white()) ? "♕" : "♛";
+	}
 };
 
 /*! King Piece
@@ -115,7 +149,11 @@ public:
 	King(Player& owner, Position loc) : Piece(owner, loc) {}
 	void move(const Position& pos);
 	void undo(const Position& pos);
-	bool isValid(const Position& pos);
+	bool is_valid(const Position& pos);
+	
+	inline std::string to_string() const {
+		return (owner().is_white()) ? "♔" : "♚";
+	}
 };
  
 } // namespace chess
