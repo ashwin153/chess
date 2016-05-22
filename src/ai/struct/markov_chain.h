@@ -1,5 +1,5 @@
-#ifndef AI_MARKOV_H
-#define AI_MARKOV_H
+#ifndef AI_MARKOV_CHAIN_H
+#define AI_MARKOV_CHAIN_H
 
 #include <random>
 #include <utility>
@@ -52,4 +52,4 @@ public:
 
 }
 
-#endif // AI_MARKOV_H
+#endif // AI_MARKOV_CHAIN_H

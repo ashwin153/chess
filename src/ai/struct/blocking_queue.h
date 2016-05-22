@@ -32,7 +32,7 @@ public:
 	 */
 	inline void pop(const T& obj) {
 		std::unique_lock<std::mutex> lock(_mutex);
-		_not_empty.wait_for(_mutex, [&_queue] { return !_queue.empty(); });
+		_not_empty.wait_for(_mutex, [this] { return !_queue.empty(); });
 		T val = _queue.back();
 		_queue.pop_back();
 		return val;
