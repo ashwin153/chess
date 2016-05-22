@@ -23,7 +23,7 @@ private:
 public:	
 	void train(const std::vector<double>& x, 
 			   const std::vector<double>&  y);
-	double predict(const double& in);
+	double predict(const double& in) const;
 };
 
 } // namespace chess

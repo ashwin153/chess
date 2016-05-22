@@ -27,7 +27,7 @@ void LinearRegression::train(const std::vector<double>& x,
 	_alpha = my - _beta * mx;
 }
 
-double LinearRegression::predict(const double& x) {
+double LinearRegression::predict(const double& x) const {
 	return _alpha + _beta * x;
 }
 

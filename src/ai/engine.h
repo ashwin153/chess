@@ -1,7 +1,7 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef AI_ENGINE_H
+#define AI_ENGINE_H
 
-#include "chess.h"
+#include "../core/game.h"
 
 namespace chess {
 
@@ -11,13 +11,20 @@ namespace chess {
  * can be easily applied. The goal of the engine is, given a
  * chess board, it should be able to decide the best next move.
  */
-class Engine {
-private:
+struct Engine {	
 
-public:
-	Move select(const Chess& game);
+	/*! Move selection
+	 * The goal of any chess engine is to decide what the best possible move
+	 * is given the current state of the board. While the manner in which
+	 * chess engines determine the optimal move may be different, the ultimate
+	 * goal is the same.
+	 * @param[in] game Chess game
+	 * @return Optimal move
+	 */
+	Move select(const Game& game) = 0;
+
 };
 
 } // namespace chess
 
-#endif // ENGINE_H
+#endif // AI_ENGINE_H
