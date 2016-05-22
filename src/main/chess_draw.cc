@@ -19,6 +19,9 @@ const struct Window {
 	std::string title;
 } window = { 800, 600, "Chess" };
 
+
+
+
 void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW error: " << description << "\n";
 }
