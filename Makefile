@@ -10,24 +10,34 @@ BIN := bin
 INC := -I include -I .
 LIB := -lglfw3 -lglew -framework OpenGL
 BUILD := build
-TARGET := $(BIN)/chess
 
 # Testing: source, build, include, and output locations
 TEST := test
 TLIB := $(LIB) -pthread -L lib -lgmock
-TEXE := $(BIN)/tester
+
+# Build Targets
+TARGET_TEXT := $(BIN)/chess-text
+TARGET_DRAW := $(BIN)/chess-draw
+TARGET_TEST := $(BIN)/chess-test
+TEXT_RUNNER := $(BUILD)/main/chess_text.o
+DRAW_RUNNER := $(BUILD)/main/chess_draw.o
 
 # Load sources and objects
-SOURCES := $(shell find $(SRC) -type f -name *.$(SRCEXT))
+SOURCES := $(shell find $(SRC) -type f -name *.$(SRCEXT) ! -path "*/main/*")
 OBJECTS := $(patsubst $(SRC)/%.$(SRCEXT),$(BUILD)/%.o,$(SOURCES))
 TESTS	:= $(shell find $(TEST) -type f -name *.$(SRCEXT))
-TESTOBJ := $(filter-out $(BUILD)/chess-textual.o, $(OBJECTS))
+TESTOBJ := $(filter-out $(BUILD)/*.o, $(OBJECTS))
 
 # All
-all: $(TARGET)
+all: $(TARGET_TEXT) $(TARGET_DRAW)
 
-# Linker (bin/chess)
-$(TARGET): $(OBJECTS)
+# Link chess-text (bin/chess-text)
+$(TARGET_TEXT): $(TEXT_RUNNER) $(OBJECTS)
+	@mkdir -p $(BIN)
+	$(CC) $^ -o $@ $(LFLAG) $(LIB)
+
+# Link chess-draw (bin/chess-draw)
+$(TARGET_DRAW): $(DRAW_RUNNER) $(OBJECTS)
 	@mkdir -p $(BIN)
 	$(CC) $^ -o $@ $(LFLAG) $(LIB)
 
@@ -42,7 +52,7 @@ clean:
 	$(RM) -r $(BUILD) $(BIN)
 
 # Tester
-tester: $(TARGET)
+test: $(TARGET_TEST)
 	@echo " $(TOBJ)"
 	$(CC) $(CFLAGS) $(TESTS) $(TESTOBJ) $(INC) $(LFLAG) $(TLIB) -o $(TEXE)
 
