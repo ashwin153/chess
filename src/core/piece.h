@@ -1,5 +1,5 @@
-#ifndef CORE_PIECE_H
-#define CORE_PIECE_H
+#ifndef PIECE_H
+#define PIECE_H
 
 #include "position.h"
 #include "player.h"
@@ -112,10 +112,10 @@ public:
 class King : public Piece {
 public:
 	King(Player& owner, Position loc) : Piece(owner, loc) {}
-	bool move(const Position& pos);
+	void move(const Position& pos);
 	bool isValid(const Position& pos);
 };
  
 } // namespace chess
 
-#endif // CORE_PIECE_H
+#endif // PIECE_H

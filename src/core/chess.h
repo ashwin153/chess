@@ -1,5 +1,5 @@
-#ifndef CORE_GAME_H
-#define CORE_GAME_H
+#ifndef GAME_H
+#define GAME_H
 
 #include "player.h"
 #include <vector>
@@ -36,6 +36,6 @@ public:
 	virtual ~Chess();	
 };
 
-}
+} // namespace chess
 
-#endif
+#endif // CHESS_H

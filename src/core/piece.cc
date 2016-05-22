@@ -25,6 +25,9 @@ void Piece::move(const Position& pos) {
 	// Capture any opposing pieces
 	Piece* enemy = owner().opponent()->piece(pos);
 	if (enemy != nullptr) enemy->_is_alive = false;
+	
+	// Mark that the piece has moved
+	_has_moved = true;
 }
 
 bool Piece::isValid(const Position& pos) {
@@ -43,10 +46,12 @@ bool Piece::isValid(const Position& pos) {
 	Piece* piece = owner().opponent()->piece(pos);
 	if (piece != nullptr) piece->_is_alive = false;
 	Position old = _loc;
+	bool has_moved = _has_moved;
 	move(pos);
 	bool in_check = owner().in_check();
 	if (piece != nullptr) piece->_is_alive = true;
 	_loc = old;
+	_has_moved = has_moved;
 	return !in_check;
 }
 
@@ -131,16 +136,16 @@ bool Queen::isValid(const Position& pos) {
 	return Rook::isValid(pos) || Bishop::isValid(pos);
 }
 
-bool King::move(const Position& pos) {
+void King::move(const Position& pos) {
 	// Move the rook if castling
 	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {
-		int dir = (pos.y - this.loc().y) / pos.dist(this->loc());
+		int dir = (pos.y - this->loc().y) / pos.dist(this->loc());
 		Piece* rook = owner().piece(Position(pos.x, pos.y + dir));	
 		rook->move(Position(pos.x, pos.y+dir));
 	}
 
 	// Otherwise move normally
-	return Piece::move(pos);
+	Piece::move(pos);
 }
   
 bool King::isValid(const Position& pos) {
@@ -155,14 +160,14 @@ bool King::isValid(const Position& pos) {
 		
 		// The king and rook may not have moved and the king may not
 		// move out of, into, or through check.
-		if (has_moved() || rook == nullptr || rook.has_moved() ||
+		if (has_moved() || rook == nullptr || rook->has_moved() ||
 			owner().in_check() || !Piece::isValid(adj) || !Piece::isValid(pos)) 
 			return false;
 
 		// Check that all adjacent squares between the king and rook are empty
 		for (int i = 1; i < rook->loc().dist(this->loc()); i++)
 			if (owner().piece(this->loc() + i*adj) != nullptr ||
-				owner().opponent()->piece(this->loc + i*adj) != nullptr)
+				owner().opponent()->piece(this->loc() + i*adj) != nullptr)
 				return false;
 		return true;
 	}

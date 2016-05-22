@@ -1,5 +1,5 @@
-#ifndef CORE_POSITION_H
-#define CORE_POSITION_H
+#ifndef POSITION_H
+#define POSITION_H
 
 #include <cstdlib>
 #include <string>
@@ -49,6 +49,13 @@ struct Position {
 		return *this;	
 	}
 
+	/*! Overload the scalar multiplication operator. */
+	inline Position& operator*=(const double rhs) {
+		x *= rhs;
+		y *= rhs;
+		return *this;
+	}
+
 	/*! Overload the equals operator. */
 	inline bool operator==(const Position& pos) const {
 		return x == pos.x && y == pos.y;
@@ -75,6 +82,14 @@ inline Position operator-(Position lhs, const Position& rhs) {
 	return lhs -= rhs;
 }
 
+inline Position operator*(Position lhs, const double rhs) {
+	return lhs *= rhs;
+}
+
+inline Position operator*(const double rhs, Position lhs) {
+	return lhs *= rhs;
+}
+
 } // namespace chess
 
-#endif // CORE_POSITION_H
+#endif // POSITION_H
