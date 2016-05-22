@@ -12,7 +12,7 @@ SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%.$(SRCEXT),$(BUILDDIR)/%.o,$(SOURCES))
 
 CFLAGS := -std=c++11 -g -Wall -Werror
-LIB := -L lib
+LIB := -L/usr/local -lglfw3 -lglew -framework OpenGL
 INC := -I include
 
 # Linker
