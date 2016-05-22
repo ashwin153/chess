@@ -15,12 +15,13 @@ TARGET := $(BIN)/chess
 # Testing: source, build, include, and output locations
 TEST := test
 TLIB := $(LIB) -pthread -L lib -lgmock
-TESTER := $(BIN)/tester
+TEXE := $(BIN)/tester
 
 # Load sources and objects
 SOURCES := $(shell find $(SRC) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRC)/%.$(SRCEXT),$(BUILD)/%.o,$(SOURCES))
 TESTS	:= $(shell find $(TEST) -type f -name *.$(SRCEXT))
+TESTOBJ := $(filter-out $(BUILD)/gl/main.o, $(OBJECTS))
 
 # All
 all: $(TARGET)
@@ -41,7 +42,8 @@ clean:
 	$(RM) -r $(BUILD) $(BIN)
 
 # Tester
-tester:
-	$(CC) $(CFLAGS) $(TESTS) $(OBJECTS) $(INC) $(LFLAG) $(TLIB) -o $(TESTER)
+tester: $(TARGET)
+	@echo " $(TOBJ)"
+	$(CC) $(CFLAGS) $(TESTS) $(TESTOBJ) $(INC) $(LFLAG) $(TLIB) -o $(TEXE)
 
 .PHONY: clean

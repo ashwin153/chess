@@ -26,6 +26,12 @@ public:
 	}
 };
 
+TEST_F(PositionTest, AlgebraicNotation) {
+	EXPECT_EQ(Position(0, 0), Position('a', 8));
+	EXPECT_EQ(Position(4, 4), Position('e', 4));
+	EXPECT_EQ(Position(7, 7), Position('h', 1));
+}
+
 TEST_F(PositionTest, Dist) {
 	EXPECT_EQ(0, origin->dist(*origin));
 	EXPECT_EQ(1, origin->dist(Position(0, 1)));
