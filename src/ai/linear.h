@@ -1,5 +1,5 @@
-#ifndef AI_LINEAR_H
-#define AI_LINEAR_H
+#ifndef LINEAR_H
+#define LINEAR_H
 
 #include "model.h"
 
@@ -28,4 +28,4 @@ public:
 
 } // namespace chess
 
-#endif // AI_LINEAR_H
+#endif // LINEAR_H

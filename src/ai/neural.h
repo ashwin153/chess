@@ -1,5 +1,5 @@
-#ifndef AI_NEURAL_H
-#define AI_NEURAL_H
+#ifndef NEURAL_H
+#define NEURAL_H
 
 #include "model.h"
 #include <vector>
@@ -13,25 +13,17 @@ namespace chess {
  * bounded function (typically a sigmoid). This quantity is known
  * as the action potential of the neuron.
  */
-class Neuron {
-private:
-	std::vector<double> _weights;
+struct Neuron {
+	std::vector<double> weights;
 
-public:
 	/*! Create a randomized neuron that accepts ninputs. */
 	Neuron(int ninputs);
 
 	/*! Creates a neuron with the specified weights.
 	 * The last weight is considered to be the bias weight;
 	 */
-	Neuron(std::vector<double> weights) : _weights(weights) {}
+	Neuron(std::vector<double> weights) : weights(weights) {}
 	
-	/*! Number of inputs to this neuron. */
-	inline int inputs() { _weights.size() - 1; }
-	
-	/*! Weights associated with this neuron. */
-	inline std::vector<double> weights() { return _weights; }
-
 	/*! Evaluates the action potential of the input. */
 	double eval(const std::vector<double>& in);
 };
@@ -42,7 +34,7 @@ public:
  */
 class NeuralNetwork : public Model<std::vector<double>, std::vector<double>> {
 private:
-	Neuron** _neurons;
+	std::vector<std::vector<Neuron>> _layers;
 	double lrate;
 
 public:
@@ -59,4 +51,4 @@ public:
 
 } // namespace chess
 
-#endif // AI_NEURAL_H
+#endif // NEURAL_H

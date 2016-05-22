@@ -9,14 +9,14 @@ Neuron::Neuron(int ninputs) {
 	// Seed the random number generator with the current time.
 	srand(time(NULL));
 	for (int i = 0; i < ninputs + 1; i++)
-		_weights.push_back(2.0 * rand() / RAND_MAX - 1.0);
+		weights.push_back(2.0 * rand() / RAND_MAX - 1.0);
 }
 
 double Neuron::eval(const std::vector<double>& in) {
 	// Linear combination of weights and inputs plus bias
-	double sum = _weights.back();
-	for (int i = 0; i < _weights.size() - 1; i++)
-		sum += in[i] * _weights[i];
+	double sum = weights.back();
+	for (int i = 0; i < weights.size() - 1; i++)
+		sum += in[i] * weights[i];
 
 	// Fast sigmoid approximation
 	return sum / (1 + std::abs(sum));
@@ -50,7 +50,7 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& in,
 		// to update weights along the way.
 		std::vector<std::vector<double>> errors;
 		for (int i = _layers.size() - 1; i >= 0; i--) {
-			std::vector<double>> error;
+			std::vector<double> error;
 
 			for (int j = 0; j < _layers[i].size(); j++) {
 				if (i == _layers.size() - 1) {
@@ -75,7 +75,7 @@ void NeuralNetwork::train(const std::vector<std::vector<double>>& in,
 				// should be good enough for now.
 				std::vector<double> delta;
 				for (int k = 0; k < _layers[i][j].weights.size(); k++)
-					delta.push_back((k == weights.size() - 1) ?
+					delta.push_back((k == _layers[i][j].weights.size() - 1) ?
 						_layers[i][j].weights[k]+lrate*errors[i][j] :
 						_layers[i][j].weights[k]+lrate*errors[i][j]*outputs[i][k]);
 				_layers[i][j].weights = delta;

@@ -4,7 +4,8 @@
 /*! Epsilon represents zero-tolerance when ray-tracing. */
 #define EPSILON 0.0000001
 
-#include <GL/glm.h>
+#include "../object.h"
+#include <glm/glm.hpp>
 
 namespace chess {
 
@@ -18,7 +19,7 @@ struct Ray {
 
 	Ray(glm::vec3 pos, glm::vec3 dir) : pos(pos), dir(dir) {}
 	glm::vec3 at(const double& t) const;
-	Ray& operator=(const Ray& rhs)
+	Ray& operator=(const Ray& rhs);
 };
 
 /*! Intersection
@@ -27,7 +28,7 @@ struct Ray {
  */
 struct Isect {
 	double t;
-	Model* model;
+	Object* obj;
 };
 
 } // namespace chess

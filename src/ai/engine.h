@@ -1,5 +1,5 @@
-#ifndef AI_ENGINE_H
-#define AI_ENGINE_H
+#ifndef ENGINE_H
+#define ENGINE_H
 
 #include "chess.h"
 
@@ -20,4 +20,4 @@ public:
 
 } // namespace chess
 
-#endif // AI_ENGINE_H
+#endif // ENGINE_H

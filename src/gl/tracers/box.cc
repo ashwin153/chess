@@ -4,31 +4,32 @@
 namespace chess {
 
 double Box::area() const {
-	glm::vec3 dx = max[0] - min[0];
-	glm::vec3 dy = max[1] - min[1];
-	glm::vec3 dz = max[2] - min[2];
+	double dx = max[0] - min[0];
+	double dy = max[1] - min[1];
+	double dz = max[2] - min[2];
 	return 2 * (dx * dy + dy *dz + dz * dx);
 }
 
 double Box::volume() const {
-	glm::vec3 dx = max[0] - min[0];
-	glm::vec3 dy = max[1] - min[1];
-	glm::vec3 dz = max[2] - min[2];
+	double dx = max[0] - min[0];
+	double dy = max[1] - min[1];
+	double dz = max[2] - min[2];
 	return dx * dy * dz;
 }
 
-void Box::merge(const Box& box) const {
-	// If either box is empty, return the other box
-	if (box.volume() == 0)  return *this;
-	else if (volume() == 0) return box;
+void Box::merge(const Box& box) {
+	// If either box is empty, make the box the other box
+	if (is_empty) { *this = box; return; }
+	else if (box.is_empty) return;
 
-	for (int i = 0; i < 3; i++) {
-		min[i] = min(min[i], box.min[i]);
-		max[i] = max(max[i], box.max[i]);
+	// Find the minimum and maximum of both boxes along each axis
+	for (int axis = 0; axis < 3; axis++) {
+		min[axis] = std::min(min[axis], box.min[axis]);
+		max[axis] = std::max(max[axis], box.max[axis]);
 	}	
 }
 
-bool intersect(const Ray& r) const {
+bool Box::intersect(const Ray& r) const {
 	// Uses the Kay/Kajiya Algorithm to detect ray-box intersections.
 	// Set tmin and tmax to be negative/positive infinity.
 	double tmin = -1.0e308;
@@ -44,11 +45,11 @@ bool intersect(const Ray& r) const {
 		double t1 = v1 / r.dir[axis];
 		double t2 = v2 / r.dir[axis];
 
-		tmin = (min(t1, t2) > tmin) ? min(t1, t2) : tmin;
-		tmax = (max(t1, t2) < tmax) ? max(t1, t2) : tmax;
+		tmin = (std::min(t1, t2) > tmin) ? std::min(t1, t2) : tmin;
+		tmax = (std::max(t1, t2) < tmax) ? std::max(t1, t2) : tmax;
 
 		// If the box is missed or is behind the ray, return false
-		if (tmin > tmax || tMax < EPSILON)
+		if (tmin > tmax || tmax < EPSILON)
 			return false;
 	}
 

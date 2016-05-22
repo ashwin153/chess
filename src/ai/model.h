@@ -1,5 +1,5 @@
-#ifndef AI_MODEL_H
-#define AI_MODEL_H
+#ifndef MODEL_H
+#define MODEL_H
 
 #include <vector>
 
@@ -32,4 +32,4 @@ public:
 
 } // namespace chess
 
-#endif // AI_MODEL_H
+#endif // MODEL_H

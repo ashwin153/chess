@@ -1,5 +1,5 @@
-#ifndef AI_MATRIX_H
-#define AI_MATRIX_H
+#ifndef MATRIX_H
+#define MATRIX_H
 
 namespace chess {
 
@@ -40,4 +40,4 @@ Matrix operator*(Matrix lhs, const double& rhs);
 
 } // namespace chess
 
-#endif
+#endif // MATRIX_H
