@@ -49,7 +49,7 @@ public:
 		EXPECT_CALL(*white, is_white())
 			.WillRepeatedly(testing::Return(true));
 		EXPECT_CALL(*black, is_white())
-			.WillRepeatedly(testing::Return(false));
+			.WillRepeatedly(testing::Return(false));	
 
 		// Setup the opponent relationships between players
 		EXPECT_CALL(*white, opponent())
@@ -71,7 +71,6 @@ public:
 	}
 
 	virtual void TearDown() {
-		// Delete the mocked players
 		delete white;
 		delete black;
 		white = nullptr;
@@ -79,10 +78,11 @@ public:
 	}
 };
 
-class PawnTest : public PieceTest {};
+class PawnTest : public PieceTest{};
 class KnightTest : public PieceTest {};
 class BishopTest : public PieceTest {};
 class RookTest : public PieceTest {};
+class QueenTest : public PieceTest {};
 class KingTest : public PieceTest {};
 
 // Piece Tests
@@ -126,160 +126,293 @@ TEST_F(PieceTest, IsValid_InCheck_F) {
 }
 
 // Pawn Tests
-// Movement Tests
 TEST_F(PawnTest, IsValid_ForwardMove_T) {
-	/*
-	Pawn wpawn = Pawn(*white, Position(5, 1));
-	Pawn bpawn = Pawn(*black, Position(2, 1));
-	
-	EXPECT_CALL(*white, piece(testing::_))
-		.WillRepeatedly(testing::Return(nullptr));
-	EXPECT_CALL(*black, piece(testing::_))
-		.WillRepeatedly(testing::Return(nullptr));
-	
-	EXPECT_TRUE(wpawn.isValid(Position(4, 1)));
-	EXPECT_TRUE(bpawn.isValid(Position(3, 1)));	
-	*/
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));	
+	EXPECT_TRUE(wpawn.isValid(Position(5, 1)));
+	EXPECT_TRUE(bpawn.isValid(Position(2, 1)));
 }
 
 TEST_F(PawnTest, isValid_2ForwardMove_T) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+	EXPECT_TRUE(wpawn.isValid(Position(4, 1)));
+	EXPECT_TRUE(bpawn.isValid(Position(3, 1)));
+}
 
+TEST_F(PawnTest, isValid_2ForwardMoveAfterFirst_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+	wpawn.move(Position(5, 1));
+	bpawn.move(Position(2, 1));
+	EXPECT_FALSE(wpawn.isValid(Position(3, 1)));
+	EXPECT_FALSE(bpawn.isValid(Position(4, 1)));
 }
 
 TEST_F(PawnTest, isValid_NonForwardMove_F) {
-	/*
-	Pawn wpawn = Pawn(*white, Position(5, 1));
-	Pawn bpawn = Pawn(*black, Position(5, 1));
-
-	EXPECT_CALL(*white, piece(testing::_))
-		.WillRepeatedly(testing::Return(nullptr));
-	EXPECT_CALL(*black, piece(testing::_))
-		.WillRepeatedly(testing::Return(nullptr));
-	
-	// Pawns may only move forward
-	EXPECT_FALSE(wpawn.isValid(Position(6, 1)));
-	EXPECT_FALSE(bpawn.isValid(Position(4, 1)));
-
-	for (int x = 4; x <= 6; x++) {
-		EXPECT_FALSE(wpawn.isValid(Position(x, 0)));
-		EXPECT_FALSE(wpawn.isValid(Position(x, 2)));
-		EXPECT_FALSE(bpawn.isValid(Position(x, 0)));
-		EXPECT_FALSE(bpawn.isValid(Position(x, 2)));
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+	EXPECT_FALSE(wpawn.isValid(Position(7, 1)));
+	EXPECT_FALSE(bpawn.isValid(Position(0, 1)));
+	for (int x = -1; x <= 1; x++) {
+		EXPECT_FALSE(wpawn.isValid(Position(6+x, 0)));
+		EXPECT_FALSE(wpawn.isValid(Position(6+x, 2)));
+		EXPECT_FALSE(bpawn.isValid(Position(1+x, 0)));
+		EXPECT_FALSE(bpawn.isValid(Position(1+x, 2)));
 	}
-	*/
 }
 
 TEST_F(PawnTest, isValid_Enpassant_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
 
+	EXPECT_CALL(*black, piece(Position(4, 2)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(3, 0)))
+		.WillRepeatedly(testing::Return(&wpawn));
+
+	EXPECT_FALSE(wpawn.isValid(Position(4, 1)));
+	EXPECT_FALSE(bpawn.isValid(Position(3, 1)));	
 }
 
-// Capturing Tests
-TEST_F(PawnTest, isValid_successDiagonalCapture) {
+TEST_F(PawnTest, isValid_DiagonalCapture_T) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+   	Pawn bpawn = Pawn(*black, Position(1, 1));
 
+	EXPECT_CALL(*black, piece(Position(5, 0)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(2, 0)))
+		.WillRepeatedly(testing::Return(&wpawn));
+	EXPECT_CALL(*black, piece(Position(5, 2)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(2, 2)))
+		.WillRepeatedly(testing::Return(&wpawn));
+	
+	EXPECT_TRUE(wpawn.isValid(Position(5, 0)));
+	EXPECT_TRUE(wpawn.isValid(Position(5, 2)));
+	EXPECT_TRUE(bpawn.isValid(Position(2, 0)));
+	EXPECT_TRUE(bpawn.isValid(Position(2, 2)));	
 }
 
-TEST_F(PawnTest, isValid_failNonDiagonalCapture) {
+TEST_F(PawnTest, isValid_NonDiagonalCapture_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
 
+	EXPECT_CALL(*black, piece(Position(5, 1)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(2, 1)))
+		.WillRepeatedly(testing::Return(&wpawn));
+	EXPECT_CALL(*black, piece(Position(7, 0)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(0, 2)))
+		.WillRepeatedly(testing::Return(&wpawn));
+
+	EXPECT_FALSE(wpawn.isValid(Position(5, 1)));
+	EXPECT_FALSE(wpawn.isValid(Position(7, 0)));
+	EXPECT_FALSE(bpawn.isValid(Position(2, 1)));
+	EXPECT_FALSE(bpawn.isValid(Position(0, 2)));
 }
 
-/*
+
 // KnightTest
-// Movement Tests
-TEST_F(KnightTest, isValid_successValidMove) {
-
+TEST_F(KnightTest, isValid_ValidMove_T) {
+	Knight knight = Knight(*white, Position(4, 3));
+	EXPECT_TRUE(knight.isValid(Position(2, 2)));
+	EXPECT_TRUE(knight.isValid(Position(6, 4)));
+	EXPECT_TRUE(knight.isValid(Position(3, 1)));
+	EXPECT_TRUE(knight.isValid(Position(5, 4)));	
 }
 
-TEST_F(KnightTest, isValid_failInvalidMove) {
-
+TEST_F(KnightTest, isValid_InvalidMove_F) {
+	Knight knight = Knight(*white, Position(4, 3));
+	EXPECT_FALSE(knight.isValid(Position(1, 3)));
+	EXPECT_FALSE(knight.isValid(Position(6, 5)));
 }
 
 // BishopTest
-// Movement Tests
-TEST(BishopTest, isValid_successDiagonalMove) {
-
+TEST_F(BishopTest, isValid_DiagonalMove_T) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_TRUE(bishop.isValid(Position(0, 0)));
+	EXPECT_TRUE(bishop.isValid(Position(7, 1)));
+	EXPECT_TRUE(bishop.isValid(Position(1, 7)));
+	EXPECT_TRUE(bishop.isValid(Position(7, 7)));
 }
 
-TEST(BishopTest, isValid_failAllyObstructedMove) {
-
+TEST_F(BishopTest, isValid_AllyObstructedMove_F) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_CALL(*white, piece(Position(2, 2)))
+		.WillRepeatedly(testing::Return(&bishop));
+	EXPECT_FALSE(bishop.isValid(Position(0, 0)));
 }
 
-TEST(BishopTest, isValid_failEnemyObstructedMove) {
-
+TEST_F(BishopTest, isValid_EnemyObstructedMove_F) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_CALL(*black, piece(Position(2, 2)))
+		.WillRepeatedly(testing::Return(&bishop));
+	EXPECT_FALSE(bishop.isValid(Position(0, 0)));
 }
 
-TEST(BishopTest, isValid_failNonDiagonalMove) {
-
+TEST_F(BishopTest, isValid_NonDiagonalMove_F) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_FALSE(bishop.isValid(Position(3, 4)));
+	EXPECT_FALSE(bishop.isValid(Position(5, 4)));
+	EXPECT_FALSE(bishop.isValid(Position(7, 0)));
+	EXPECT_FALSE(bishop.isValid(Position(0, 7)));
 }
 
 // RookTest
-// Movement Tests
-TEST_F(RookTest, isValid_successStraightMove) {
+TEST_F(RookTest, isValid_StraightMove_T) {
 	Rook rook = Rook(*white, Position(3, 3));
-	for (int x = 0; x < 8; x++)
-		for (int y = 0; y < 8; y++)
-			if (x == 3 != y == 3)
-				EXPECT_TRUE(rook.isValid(Position(x, y)));
+	EXPECT_TRUE(rook.isValid(Position(0, 3)));
+	EXPECT_TRUE(rook.isValid(Position(7, 3)));
+	EXPECT_TRUE(rook.isValid(Position(3, 0)));
+	EXPECT_TRUE(rook.isValid(Position(3, 7)));
 }
 
-TEST_F(RookTest, isValid_failNonStraightMove) {
+TEST_F(RookTest, isValid_NonStraightMove_F) {
 	Rook rook = Rook(*white, Position(3, 3));
-	for (int x = 0; x < 8; x++)
-		for (int y = 0; y < 8; y++)
-			if(x != 3 && y != 3)
-				EXPECT_FALSE(rook.isValid(Position(x, y)))
+	EXPECT_FALSE(rook.isValid(Position(4, 2)));
+	EXPECT_FALSE(rook.isValid(Position(1, 2)));
+	EXPECT_FALSE(rook.isValid(Position(4, 4)));
+	EXPECT_FALSE(rook.isValid(Position(1, 4)));
 }
 
-TEST_F(RookTest, isValid_failAllyObstructedMove) {
-
+TEST_F(RookTest, isValid_AllyObstructedMove_F) {
+	Rook rook = Rook(*white, Position(3, 3));
+	EXPECT_CALL(*white, piece(Position(2, 3)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_FALSE(rook.isValid(Position(0, 3)));
 }
 
-TEST_F(RookTest, isValid_failEnemyObstructedMove) {
-
+TEST_F(RookTest, isValid_EnemyObstructedMove_F) {
+	Rook rook = Rook(*white, Position(3, 3));
+	EXPECT_CALL(*black, piece(Position(2, 3)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_FALSE(rook.isValid(Position(0, 3)));
 }
 
 // KingTest
-// Movement Tests
-TEST_F(KingTest, isValid_successAdjacentMove) {
+TEST_F(KingTest, isValid_AdjacentMove_T) {
 	King king = King(*white, Position(3, 3));
-	for (int x = 2; x <= 4; x++)
-		for (int y = 2; y <= 4; y++)
-			if (x != 3 && y != 3)
-				EXPECT_TRUE(king.isValid(Position(x, y)));
+	EXPECT_TRUE(king.isValid(Position(2, 2)));
+	EXPECT_TRUE(king.isValid(Position(2, 3)));
+	EXPECT_TRUE(king.isValid(Position(2, 4)));
+	EXPECT_TRUE(king.isValid(Position(3, 2)));
+	EXPECT_TRUE(king.isValid(Position(3, 4)));
+	EXPECT_TRUE(king.isValid(Position(4, 2)));
+	EXPECT_TRUE(king.isValid(Position(4, 3)));
+	EXPECT_TRUE(king.isValid(Position(4, 4)));
 }
 
-TEST_F(KingTest, isValid_failNonAdjacentMove) {
-
+TEST_F(KingTest, isValid_NonAdjacentMove_F) {
+	King king = King(*white, Position(3, 3));
+	EXPECT_FALSE(king.isValid(Position(5, 3)));
+	EXPECT_FALSE(king.isValid(Position(1, 1)));
 }
 
 // Castling Tests (King Side + Queen Side)
-TEST_F(KingTest, isValid_successCastle) {
-			
+TEST_F(KingTest, move_KingsideCastle_T) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 7));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	king.move(Position(7, 6));
+	EXPECT_EQ(Position(7, 5), rook.loc());
 }
 
-TEST_F(KingTest, isValid_failCastleAfterMoving) {
-
+TEST_F(KingTest, move_QueensideCastle_T) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 0));
+	EXPECT_CALL(*white, piece(Position(7, 0)))
+		.WillRepeatedly(testing::Return(&rook));
+	king.move(Position(7, 2));
+	EXPECT_EQ(Position(7, 3), rook.loc());
 }
 
-TEST_F(KingTest, isValid_failCastleAllyObstructed) {
-
+TEST_F(KingTest, isValid_ValidCastle_T) {
+	King king  = King(*white, Position(7, 4));
+	Rook krook = Rook(*white, Position(7, 7));
+	Rook qrook = Rook(*white, Position(7, 0));	
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&krook));
+	EXPECT_CALL(*white, piece(Position(7, 0)))
+		.WillRepeatedly(testing::Return(&qrook));
+	EXPECT_TRUE(king.isValid(Position(7, 6)));
+	EXPECT_TRUE(king.isValid(Position(7, 2)));
 }
 
-TEST_F(KingTest, isValid_failCastleEnemyObstructed) {
-
+TEST_F(KingTest, isValid_CastleAfterKingMove_F) {
+	King king = King(*white, Position(7, 5));
+	Rook rook = Rook(*white, Position(7, 7));
+	king.move(Position(7, 4));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_FALSE(king.isValid(Position(7, 6)));
 }
 
-TEST_F(KingTest, isValid_failCastleOutOfCheck) {
-
+TEST_F(KingTest, isValid_CastleAfterRookMove_F) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 6));
+	rook.move(Position(7, 7));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_FALSE(king.isValid(Position(7, 6)));
 }
 
-TEST_F(KingTest, isValid_failCastleThroughCheck) {
-
+TEST_F(KingTest, isValid_CastleAllyObstructed_F) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 0));
+	EXPECT_CALL(*white, piece(Position(7, 0)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_CALL(*white, piece(Position(7, 1)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_FALSE(king.isValid(Position(7, 2)));
 }
 
-TEST_F(KingTest, isValid_failCastleIntoCheck) {
-
+TEST_F(KingTest, isValid_CastleEnemyObstructed_F) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 7));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_CALL(*black, piece(Position(7, 5)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_FALSE(king.isValid(Position(7, 6)));
 }
 
-*/
-
+TEST_F(KingTest, isValid_CastleOutOfCheck_F) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 8));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_CALL(*white, in_check())
+		.WillOnce(testing::Return(true))
+		.WillRepeatedly(testing::Return(false));
+	EXPECT_FALSE(king.isValid(Position(7, 6)));
 }
+
+TEST_F(KingTest, isValid_CastleThroughCheck_F) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 8));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_CALL(*white, in_check())
+		.WillOnce(testing::Return(false))
+		.WillOnce(testing::Return(false))
+		.WillRepeatedly(testing::Return(true));
+	EXPECT_FALSE(king.isValid(Position(7, 6)));
+	
+}
+
+TEST_F(KingTest, isValid_CastleIntoCheck_F) {
+	King king = King(*white, Position(7, 4));
+	Rook rook = Rook(*white, Position(7, 8));
+	EXPECT_CALL(*white, piece(Position(7, 7)))
+		.WillRepeatedly(testing::Return(&rook));
+	EXPECT_CALL(*white, in_check())
+		.WillOnce(testing::Return(false))
+		.WillOnce(testing::Return(true))
+		.WillRepeatedly(testing::Return(false));
+	EXPECT_FALSE(king.isValid(Position(7, 6)));
+}
+
+} // namespace chess

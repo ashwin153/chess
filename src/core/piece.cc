@@ -25,7 +25,7 @@ void Piece::move(const Position& pos) {
 	// Capture any opposing pieces
 	Piece* enemy = owner().opponent()->piece(pos);
 	if (enemy != nullptr) enemy->_is_alive = false;
-	
+
 	// Mark that the piece has moved
 	_has_moved = true;
 }
@@ -102,7 +102,7 @@ bool Bishop::isValid(const Position& pos) {
 	// The bishop may not pass through pieces of either color.
 	int sx = ((dx>0)-(dx<0)), sy = ((dy>0)-(dy<0));
 	for(int i = 1; i < std::abs(dx); i++) {
-		Position nxt = Position(pos.x + i*sx, pos.y + i*sy);
+		Position nxt = this->loc() + Position(i*sx, i*sy);
 		if (owner().piece(nxt) != nullptr ||
 			owner().opponent()->piece(nxt) != nullptr)
 			return false;
@@ -123,7 +123,7 @@ bool Rook::isValid(const Position& pos) {
 	// in order to test all possible paths to pos with 1 conditional.
 	int sx = ((dx>0)-(dx<0)), sy = ((dy>0)-(dy<0));
 	for(int i = 1; i < std::abs(dx + dy); i++) {
-		Position nxt = Position(pos.x + i*sx, pos.y + i*sy);
+		Position nxt = this->loc() + Position(i*sx, i*sy);
 		if (owner().piece(nxt) != nullptr || 
 			owner().opponent()->piece(nxt) != nullptr)
 			return false;
@@ -140,8 +140,8 @@ void King::move(const Position& pos) {
 	// Move the rook if castling
 	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {
 		int dir = (pos.y - this->loc().y) / pos.dist(this->loc());
-		Piece* rook = owner().piece(Position(pos.x, pos.y + dir));	
-		rook->move(Position(pos.x, pos.y+dir));
+		Piece* rook = owner().piece(Position(pos.x, (dir > 0) * 7));	
+		rook->move(Position(pos.x, pos.y-dir));
 	}
 
 	// Otherwise move normally
@@ -150,22 +150,25 @@ void King::move(const Position& pos) {
   
 bool King::isValid(const Position& pos) {
 	// The king may always move one square in any direction
-	if (Piece::isValid(pos) && pos.dist(this->loc()) == 1) return true;
+	int dx = std::abs(pos.x - this->loc().x);
+	int dy = std::abs(pos.y - this->loc().y);
+	if (dx <= 1 && dy <= 1 && Piece::isValid(pos)) return true;
 	
 	// The king may move twice to castle
 	if (pos.dist(this->loc()) == 2 && pos.x == this->loc().x) {
-		bool isKingSide = pos.y - this->loc().y > 0;		
+		bool isKingSide = (pos.y - this->loc().y) > 0;		
 		Piece* rook = owner().piece(Position(this->loc().x, isKingSide*7));
-		Position adj = isKingSide ? Position(0, 1) : Position(0, -1);
-		
+		Position adj = isKingSide ? Position(0, 1) : Position(0, -1);		
+
 		// The king and rook may not have moved and the king may not
 		// move out of, into, or through check.
 		if (has_moved() || rook == nullptr || rook->has_moved() ||
-			owner().in_check() || !Piece::isValid(adj) || !Piece::isValid(pos)) 
+			owner().in_check() || !Piece::isValid(pos) ||
+			!Piece::isValid(this->loc() + adj)) 
 			return false;
-
+	
 		// Check that all adjacent squares between the king and rook are empty
-		for (int i = 1; i < rook->loc().dist(this->loc()); i++)
+		for (int i = 1; i <= 3 - isKingSide; i++)
 			if (owner().piece(this->loc() + i*adj) != nullptr ||
 				owner().opponent()->piece(this->loc() + i*adj) != nullptr)
 				return false;
