@@ -38,12 +38,23 @@ public:
 	 * returns the pops the top element of the queue.
 	 * @return Top element.
 	 */
-	inline void pop() {
+	inline T pop() {
 		std::unique_lock<std::mutex> lock(_mutex);
-		_not_empty.wait_for(_mutex, [this] { return !_queue.empty(); });
+		_not_empty.wait(lock, [this] { return !_queue.empty(); });
 		T val = _queue.back();
 		_queue.pop_back();
 		return val;
+	}
+
+	/*!
+	 * Blocks indefinitely until there are elements in the queue, and then
+	 * peeks at the top element of the queue, without removing it.
+	 * @return Top element.
+	 */
+	inline T peek() {
+		std::unique_lock<std::mutex> lock(_mutex);
+		_not_empty.wait(lock, [this] { return !_queue.empty(); });
+		return _queue.back();
 	}
 
 	/*!

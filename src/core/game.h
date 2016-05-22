@@ -99,6 +99,14 @@ public:
 	std::string to_string() const;
 
 	/*!
+	 * Returns the history of all played moves for this game.
+	 * @return Move history.
+	 */
+	inline std::vector<Move> history() {
+		return _history;
+	}
+
+	/*!
 	 * Returns all playable moves. This method filters the possible moves for
 	 * the next player to the ones that actually produce valid board 
 	 * combinations. It aggregates possible moves and filters out playable ones.
