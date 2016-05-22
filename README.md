@@ -5,6 +5,7 @@ This project is my first large scale C++ project that attempts to incorporate va
 - Add unit tests for Player, Game, and pawn promotion
 - Create game engine
 - Create graphical interface
+- Use TensorFlow for AI
 
 # Goals
 - Style: Ensure that I conform to C++ best practices and make good stylistic decisions when writing the code.
