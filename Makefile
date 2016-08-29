@@ -1,7 +1,7 @@
 # Compiler, Linker Flags, Source Properties
 CC := g++
 CFLAGS := -std=c++11 -g -O3 -Wall -Werror
-LFLAGS := -L/usr/local -L lib
+LFLAGS := -L/usr/local -L lib 
 SRCEXT := cc
 
 # Required Folders

@@ -1,17 +1,18 @@
+#include "piece_mock.h"
+#include "player_mock.h"
+
 #include "src/core/piece.h"
 #include "src/core/move.h"
 #include "src/core/player.h"
 
-#include "piece_mock.h"
-#include "player_mock.h"
-
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include <set>
 #include <iostream>
 
 namespace chess {
 
-/*! Base Test Fixture 
+/*!
  * Defines a mocked white and black player to provide a simple interface for
  * accessing the player interface without exposing the player implementation.
  *
@@ -53,63 +54,25 @@ public:
 	}
 };
 
-class PawnTest : public PieceTest{};
-class KnightTest : public PieceTest {};
-class BishopTest : public PieceTest {};
-class RookTest : public PieceTest {};
-class QueenTest : public PieceTest {};
-class KingTest : public PieceTest {};
+typedef PieceTest PawnTest;
+typedef PieceTest RookTest;
+typedef PieceTest KingTest;
+typedef PieceTest QueenTest;
+typedef PieceTest KnightTest;
+typedef PieceTest BishopTest;
 
-// Piece Tests
-TEST_F(PieceTest, Valid_T) {
-	PieceMock piece(*white, Position(0, 0));
-	EXPECT_TRUE(piece.valid(Position(1, 0)));
-	EXPECT_TRUE(piece.valid(Position(0, 1)));
+TEST_F(PawnTest, Moves_WhiteForward) {
+	Pawn pawn(*white, Position("e2"));	
+	EXPECT_THAT(pawn.moves(), testing::UnorderedElementsAre(
+		Move(MoveType::kDefault, pawn.loc(), Position("e3")),
+		Move(MoveType::kDefault, pawn.loc(), Position("e4"))));
 }
 
-TEST_F(PieceTest, Valid_InvalidPosition_F) {
-	PieceMock piece(*white, Position(0, 0));
-	EXPECT_FALSE(piece.valid(Position(-1, 0)));
-	EXPECT_FALSE(piece.valid(Position(0, -1)));
-	EXPECT_FALSE(piece.valid(Position(8, 0)));
-	EXPECT_FALSE(piece.valid(Position(0, 8)));
-	EXPECT_FALSE(piece.valid(Position(-1, -1)));
-	EXPECT_FALSE(piece.valid(Position(8, 8)));	
-}
-
-TEST_F(PieceTest, Valid_AlliedPiece_F) {
-	PieceMock piece(*white, Position(0, 0));
-	EXPECT_CALL(*white, piece(Position(1, 0)))
-		.WillOnce(testing::Return(&piece));	
-	EXPECT_FALSE(piece.valid(Position(1, 0)));
-}
-
-TEST_F(PieceTest, Valid_EnemyPiece_T) {
-	PieceMock wpiece(*white, Position(0, 0));
-	PieceMock bpiece(*black, Position(1, 0));
-	EXPECT_CALL(*white, piece(Position(1, 0)))
-		.WillOnce(testing::Return(&bpiece));	
-	EXPECT_FALSE(wpiece.valid(Position(1, 0)));
-}
-
-// Pawn Tests
-TEST_F(PawnTest, Valid_ForwardMove_T) {
-	PawnMock wpawn(*white, Position(6, 1));
-	PawnMock bpawn(*black, Position(1, 1));		
-	std::set<Move> wmoves = wpawn.moves();
-	std::set<Move> bmoves = bpawn.moves();
-
-	EXPECT_EQ(2, wmoves.size());
-	EXPECT_EQ(2, bmoves.size());
-
-	EXPECT_NE(wmoves.end(), wmoves.find(
-				Move(MoveType::kDefault, Position(6, 1), Position(5, 1))));
-	EXPECT_NE(bmoves.end(), bmoves.find(
-				Move(MoveType::kDefault, Position(1, 1), Position(2, 1))));
-	EXPECT_NE(wmoves.end(), wmoves.find(
-				Move(MoveType::kDefault, Position(6, 1), Position(4, 1))));
-	EXPECT_NE(bmoves.end(), bmoves.find(
-				Move(MoveType::kDefault, Position(1, 1), Position(3, 1))));
+TEST_F(PawnTest, Moves_BlackForward) {
+	Pawn pawn(*black, Position("e7"));
+	EXPECT_THAT(pawn.moves(), testing::UnorderedElementsAre(
+		Move(MoveType::kDefault, pawn.loc(), Position("e6")),
+		Move(MoveType::kDefault, pawn.loc(), Position("e5"))));
 }
 
 /*
@@ -193,14 +156,183 @@ TEST_F(PawnTest, Valid_NonDiagonalCapture_F) {
 	EXPECT_FALSE(bpawn.valid(Position(0, 2)));
 }
 
+// KnightTest
+TEST_F(KnightTest, Valid_ValidMove_T) {
+	Knight knight = Knight(*white, Position("f2"));
+	std::set<Move> moves = knight.moves();
+	
+
+	EXPECT_NE(moves.end(), moves.find(
+		Move(MoveType::kDefault, Position("f2"), Position("h3"))));
+	EXPECT_NE(moves.end(), moves.find(
+		Move(MoveType::kDefault, Position("f2"), Position(""))));
+}
+
+TEST_F(KnightTest, Valid_InvalidMove_F) {
+	Knight knight = Knight(*white, Position(4, 3));
+	EXPECT_FALSE(knight.valid(Position(1, 3)));
+	EXPECT_FALSE(knight.valid(Position(6, 5)));
+}
+
+// BishopTest
+TEST_F(BishopTest, Valid_DiagonalMove_T) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_TRUE(bishop.valid(Position(0, 0)));
+	EXPECT_TRUE(bishop.valid(Position(7, 1)));
+	EXPECT_TRUE(bishop.valid(Position(1, 7)));
+	EXPECT_TRUE(bishop.valid(Position(7, 7)));
+}
+
+TEST_F(BishopTest, Valid_AllyObstructedMove_F) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_CALL(*white, piece(Position(2, 2)))
+		.WillRepeatedly(testing::Return(&bishop));
+	EXPECT_FALSE(bishop.valid(Position(0, 0)));
+}
+
+TEST_F(BishopTest, Valid_EnemyObstructedMove_F) {
+	Bishop bishop = Bishop(*white, Position(4, 4));
+	EXPECT_CALL(*black, piece(Position(2, 2)))
+}
+
+// Piece Tests
+TEST_F(PieceTest, Valid_T) {
+	PieceMock piece(*white, Position(0, 0));
+	EXPECT_TRUE(piece.valid(Position(1, 0)));
+	EXPECT_TRUE(piece.valid(Position(0, 1)));
+}
+
+TEST_F(PieceTest, Valid_InvalidPosition_F) {
+	PieceMock piece(*white, Position(0, 0));
+	EXPECT_FALSE(piece.valid(Position(-1, 0)));
+	EXPECT_FALSE(piece.valid(Position(0, -1)));
+	EXPECT_FALSE(piece.valid(Position(8, 0)));
+	EXPECT_FALSE(piece.valid(Position(0, 8)));
+	EXPECT_FALSE(piece.valid(Position(-1, -1)));
+	EXPECT_FALSE(piece.valid(Position(8, 8)));	
+}
+
+TEST_F(PieceTest, Valid_AlliedPiece_F) {
+	PieceMock piece(*white, Position(0, 0));
+	EXPECT_CALL(*white, piece(Position(1, 0)))
+		.WillOnce(testing::Return(&piece));	
+	EXPECT_FALSE(piece.valid(Position(1, 0)));
+}
+
+TEST_F(PieceTest, Valid_EnemyPiece_T) {
+	PieceMock wpiece(*white, Position(0, 0));
+	PieceMock bpiece(*black, Position(1, 0));
+	EXPECT_CALL(*white, piece(Position(1, 0)))
+		.WillOnce(testing::Return(&bpiece));	
+	EXPECT_FALSE(wpiece.valid(Position(1, 0)));
+}
+
+
+
+// Pawn Tests
+TEST_F(PawnTest, Moves_WhiteForward) {
+	PawnMock wpawn(*white, Position("e2"));
+	ON_CALL(wpawn, has_moved())
+		.WillByDefault(testing::Return(true));
+
+	// White pawns that have moved previously and are not in a position to
+	// capture, may only move to a position of increasing rank.
+	std::set<Move> wmoves = wpawn.moves();
+	ASSERT_EQ(1, wmoves.size());
+	EXPECT_NE(wmoves.end(), wmoves.find(
+		Move(MoveType::kDefault, Position("e2"), Position("e3"))));
+}
+
+TEST_F(PawnTest, Valid_2ForwardMove_T) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+	EXPECT_TRUE(wpawn.valid(Position(4, 1)));
+	EXPECT_TRUE(bpawn.valid(Position(3, 1)));
+}
+
+TEST_F(PawnTest, Valid_2ForwardMoveAfterFirst_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+	wpawn.move(Position(5, 1));
+	bpawn.move(Position(2, 1));
+	EXPECT_FALSE(wpawn.valid(Position(3, 1)));
+	EXPECT_FALSE(bpawn.valid(Position(4, 1)));
+}
+
+TEST_F(PawnTest, Valid_NonForwardMove_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+	EXPECT_FALSE(wpawn.valid(Position(7, 1)));
+	EXPECT_FALSE(bpawn.valid(Position(0, 1)));
+	for (int x = -1; x <= 1; x++) {
+		EXPECT_FALSE(wpawn.valid(Position(6+x, 0)));
+		EXPECT_FALSE(wpawn.valid(Position(6+x, 2)));
+		EXPECT_FALSE(bpawn.valid(Position(1+x, 0)));
+		EXPECT_FALSE(bpawn.valid(Position(1+x, 2)));
+	}
+}
+
+TEST_F(PawnTest, Valid_Enpassant_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+
+	EXPECT_CALL(*black, piece(Position(4, 2)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(3, 0)))
+		.WillRepeatedly(testing::Return(&wpawn));
+
+	EXPECT_FALSE(wpawn.valid(Position(4, 1)));
+	EXPECT_FALSE(bpawn.valid(Position(3, 1)));	
+}
+
+TEST_F(PawnTest, Valid_DiagonalCapture_T) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+   	Pawn bpawn = Pawn(*black, Position(1, 1));
+
+	EXPECT_CALL(*black, piece(Position(5, 0)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(2, 0)))
+		.WillRepeatedly(testing::Return(&wpawn));
+	EXPECT_CALL(*black, piece(Position(5, 2)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(2, 2)))
+		.WillRepeatedly(testing::Return(&wpawn));
+	
+	EXPECT_TRUE(wpawn.valid(Position(5, 0)));
+	EXPECT_TRUE(wpawn.valid(Position(5, 2)));
+	EXPECT_TRUE(bpawn.valid(Position(2, 0)));
+	EXPECT_TRUE(bpawn.valid(Position(2, 2)));	
+}
+
+TEST_F(PawnTest, Valid_NonDiagonalCapture_F) {
+	Pawn wpawn = Pawn(*white, Position(6, 1));
+	Pawn bpawn = Pawn(*black, Position(1, 1));
+
+	EXPECT_CALL(*black, piece(Position(5, 1)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(2, 1)))
+		.WillRepeatedly(testing::Return(&wpawn));
+	EXPECT_CALL(*black, piece(Position(7, 0)))
+		.WillRepeatedly(testing::Return(&bpawn));
+	EXPECT_CALL(*white, piece(Position(0, 2)))
+		.WillRepeatedly(testing::Return(&wpawn));
+
+	EXPECT_FALSE(wpawn.valid(Position(5, 1)));
+	EXPECT_FALSE(wpawn.valid(Position(7, 0)));
+	EXPECT_FALSE(bpawn.valid(Position(2, 1)));
+	EXPECT_FALSE(bpawn.valid(Position(0, 2)));
+}
 
 // KnightTest
 TEST_F(KnightTest, Valid_ValidMove_T) {
-	Knight knight = Knight(*white, Position(4, 3));
-	EXPECT_TRUE(knight.valid(Position(2, 2)));
-	EXPECT_TRUE(knight.valid(Position(6, 4)));
-	EXPECT_TRUE(knight.valid(Position(3, 1)));
-	EXPECT_TRUE(knight.valid(Position(5, 5)));	
+	Knight knight = Knight(*white, Position("f2"));
+	std::set<Move> moves = knight.moves();
+	
+
+	EXPECT_NE(moves.end(), moves.find(
+		Move(MoveType::kDefault, Position("f2"), Position("h3"))));
+	EXPECT_NE(moves.end(), moves.find(
+		Move(MoveType::kDefault, Position("f2"), Position(""))));
 }
 
 TEST_F(KnightTest, Valid_InvalidMove_F) {

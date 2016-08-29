@@ -3,7 +3,9 @@
 
 #include "blocking_queue.h"
 
+#include <string>
 #include <iostream>
+#include <boost/archive/text_oarchive.hpp>
 
 namespace chess {
 
@@ -16,15 +18,21 @@ class Parser {
 private:
 	BlockingQueue<std::string> _games;
 	std::ostream& _log;
-	std::ostream& _out;
+	boost::archive::text_oarchive& _out;
 	int _nthreads;
 
 	/*!
 	 * This function parses games in PGN and outputs the result to the
 	 * out stream and any debug information (parse errors, etc.) to the log.
-	 * @param[in] pgn Portable game notation movetext.
 	 */ 
-	void parse_game(const std::string& pgn);
+	void parse_game();
+
+	/*!
+	 * Prints the specified debug message to the logging stream. Also appends
+	 * other information (date, time, etc.) to make it easier to filter
+	 * logging messages.
+	 */
+	void log(std::string msg);
 
 public:
 	/*!

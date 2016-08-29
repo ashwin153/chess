@@ -4,6 +4,7 @@
 #include "move.h"
 #include "position.h"
 #include "player.h"
+
 #include <set>
 #include <string>
 
@@ -19,6 +20,15 @@ private:
 	Player& _owner;
 	Position _loc;
 	Position _org;
+
+protected:
+	/*!
+	 * Returns true if the specified position does not contain an allied piece,
+	 * is within the chess board, and does not place the owner in check.
+	 * @param[in] pos Candidate position.
+	 * @return True if valid position, false otherwise.
+	 */
+	std::set<Move> filter(const std::set<Move>& moves) const;
 
 public:
 	/*!
@@ -37,15 +47,7 @@ public:
 	 * class should have a virtual destructor.
 	 */
 	virtual ~Piece() {}
-	
-	/*!
-	 * Returns true if the specified position does not contain an allied piece
-	 * and is within the chess board.
-	 * @param[in] pos Candidate position.
-	 * @return True if valid position, false otherwise.
-	 */
-	bool valid(const Position& pos) const;
-    
+	 
 	/*
 	 * Returns a collection of all the possible moves that the piece may make. 
 	 * Note: that possible moves are not the same as playable moves. For example, 

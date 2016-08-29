@@ -10,7 +10,7 @@ namespace chess {
 
 Player::Player(bool is_white) {
 	_is_white = is_white;
-	_opponent = nullptr;
+	_enemy = nullptr;
 
 	// Setup default positions depending on choice of white or black
 	_live.push_back(new Rook  (*this, Position(is_white*7, 0)));
@@ -28,10 +28,10 @@ Player::Player(bool is_white) {
 	_live.push_back(_king);
 }
 
-Player::Player(Player* opponent) : Player(!opponent->is_white()) {
+Player::Player(Player* enemy) : Player(!enemy->is_white()) {
 	// Setup opponent relationships
-	_opponent = opponent;
-	opponent->_opponent = this;
+	_enemy = enemy;
+	enemy->_enemy = this;
 }
 
 Player::~Player() {
@@ -46,16 +46,16 @@ Player::~Player() {
 }
 
 void Player::make(const Move& move) {
-	piece(move.cur)->loc(move.nxt);
-	opponent()->capture(move.nxt);
+	at(move.cur)->loc(move.nxt);
+	_enemy->capture(move.nxt);
 
 	// Handle compound moves
 	if (move.type == MoveType::kCastleKingside)
-		piece(move.nxt+Position(0, 1))->loc(move.nxt-Position(0, 1));
+		at(move.nxt+Position(0, 1))->loc(move.nxt-Position(0, 1));
 	else if (move.type == MoveType::kCastleQueenside)
-		piece(move.nxt-Position(0, 2))->loc(move.nxt+Position(0, 1));
+		at(move.nxt-Position(0, 2))->loc(move.nxt+Position(0, 1));
 	else if (move.type == MoveType::kEnpassant)
-		opponent()->capture(Position(move.cur.x, move.nxt.y));
+		_enemy->capture(Position(move.cur.x, move.nxt.y));
 	else if (move.type == MoveType::kPromoteQueen)
 		replace(move.nxt, new Queen(*this, move.nxt));
 	else if (move.type == MoveType::kPromoteKnight)
@@ -65,19 +65,19 @@ void Player::make(const Move& move) {
 	else if (move.type == MoveType::kPromoteRook)
 		replace(move.nxt, new Rook(*this, move.nxt));
 
-	_moves.push(move);
+	_history.push(move);
 }
 
 void Player::undo() {
-	Move move = _moves.top();
+	Move move = _history.top();
 
 	// Handle compound moves
 	if (move.type == MoveType::kCastleKingside)	
-		piece(move.nxt-Position(0,1))->loc(move.nxt+Position(0,1));
+		at(move.nxt-Position(0,1))->loc(move.nxt+Position(0,1));
 	else if (move.type == MoveType::kCastleQueenside)
-		piece(move.nxt+Position(0,1))->loc(move.nxt-Position(0,2));
+		at(move.nxt+Position(0,1))->loc(move.nxt-Position(0,2));
 	else if (move.type == MoveType::kEnpassant)
-		opponent()->uncapture(Position(move.cur.x, move.nxt.y));
+		_enemy->uncapture(Position(move.cur.x, move.nxt.y));
 	else if (move.type == MoveType::kPromoteKnight || 
 			 move.type == MoveType::kPromoteQueen ||
 			 move.type == MoveType::kPromoteBishop || 
@@ -85,9 +85,13 @@ void Player::undo() {
 		replace(move.nxt, new Pawn(*this, move.nxt));
 
 	// Undo specified move
-	opponent()->uncapture(move.nxt);
-	piece(move.nxt)->loc(move.cur);
-	_moves.pop();
+	_enemy->uncapture(move.nxt);
+	at(move.nxt)->loc(move.cur);
+	_history.pop();
+}
+
+bool Player::valid(const Position& pos) const {
+	return !at(pos) && pos.x >= 0 && pos.x < 8 && pos.y >= 0 && pos.y < 8;
 }
 
 bool Player::in_check(const Move& move) {
@@ -99,7 +103,7 @@ bool Player::in_check(const Move& move) {
 
 bool Player::in_check() {
 	// Check if opponents pieces can move to king
-	for (auto enemy : _opponent->_live)
+	for (auto enemy : _enemy->_live)
 		for (auto move : enemy->moves())
 			if (move.nxt == _king->loc())
 				return true;
@@ -107,13 +111,12 @@ bool Player::in_check() {
 }
 
 void Player::replace(const Position& pos, Piece* replace) {
-	delete piece(pos);
-	_live.erase(std::remove(_live.begin(), _live.end(), 
-				piece(pos)), _live.end());
+	delete at(pos);
+	_live.erase(std::remove(_live.begin(), _live.end(), at(pos)), _live.end());
 	_live.push_back(replace);
 }
 
-Piece* Player::piece(const Position& pos) const {
+Piece* Player::at(const Position& pos) const {
 	// Search the live pieces for the position
 	for (auto piece : _live)
 		if (piece->loc() == pos)

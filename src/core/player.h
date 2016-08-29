@@ -22,9 +22,9 @@ class Player {
 private:
 	std::vector<Piece*> _live;
 	std::vector<Piece*> _dead;
-	std::stack<Move> _moves;
+	std::stack<Move> _history;
 
-	Player* _opponent;
+	Player* _enemy;
 	King* _king;
 	bool _is_white;
 	
@@ -63,7 +63,7 @@ protected:
 	 * interdependent unit tests and higher testability is something I can 
 	 * always get behind.
 	 */
-	Player() : _opponent(nullptr), _king(nullptr), _is_white(false) {}
+	Player() : _enemy(nullptr), _king(nullptr), _is_white(false) {}
 
 public:
 	/*!
@@ -79,7 +79,7 @@ public:
 	 * created player is of the opposite color as the opponent.
 	 * @param[in] opponent Opposing player.
 	 */
-	Player(Player* opponent);
+	Player(Player* enemy);
 	
 	/*!
 	 * Note: Add smart pointers so that we don't have to manually manage memory.
@@ -103,7 +103,7 @@ public:
 	 * directly call this method unless you know what you are doing.
 	 */
 	void undo();
-
+	
 	/*!
 	 * Returns true if the player is in check after the specified move, and 
 	 * false otherwise. Recall that pieces are not allowed to move if doing
@@ -124,22 +124,14 @@ public:
 	 * @param[in] pos Position to search for.
 	 * @return Pointer to piece or nullptr if no such piece exists.
 	 */
-	virtual Piece* piece(const Position& pos) const;
+	virtual Piece* at(const Position& pos) const;
 
 	/*!
-	 * Returns the number of moves that the player has made.
-	 * @return Number of moves made.
-	 */
-	virtual int turns() const {
-		return _moves.size();
-	}
-
-	/*!
-	 * Returns the last move made by the player.
-	 * @return Last made move.
+	 * Returns the player's last move.
+	 * @return Move history.
 	 */
 	virtual Move last() const {
-		return _moves.top();
+		return _history.top();
 	}
 
 	/*!
@@ -155,15 +147,15 @@ public:
 	 * information about the opponent's pieces when determining validity.
 	 * @return Opposing player.
 	 */
-	virtual Player* opponent() const {
-		return _opponent;
+	virtual Player* enemy() const {
+		return _enemy;
 	}
 
 	/*!
 	 * Returns a list of all the player's live pieces.
 	 * @return Live pieces.
 	 */
-	std::vector<Piece*> live() const {
+	virtual std::vector<Piece*> live() const {
 		return _live;
 	}
 
@@ -171,7 +163,7 @@ public:
 	 * Returns a list of all the player's dead pieces.
 	 * @return Dead pieces.
 	 */
-	std::vector<Piece*> dead() const {
+virtual std::vector<Piece*> dead() const {
 		return _dead;
 	}
 

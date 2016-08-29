@@ -1,6 +1,10 @@
 #ifndef PIECE_MOCK_H
 #define PIECE_MOCK_H
 
+#include "src/core/piece.h"
+#include "src/core/position.h"
+#include "src/core/player.h"
+
 #include "gmock/gmock.h"
 
 namespace chess {

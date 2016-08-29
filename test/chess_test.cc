@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-/*! Test Case Runner
+/*!
  * This class is responsible for running all tests and is the
  * main entry point for the test suite. To generate an XML test 
  * report, specify the command line argument --gtest_output 
