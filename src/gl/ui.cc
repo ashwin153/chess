@@ -46,30 +46,29 @@ ChessWindow::ChessWindow(int w, int h) : Window(w, h, "3D Chess") {
 		}
 	}
 	
-/*	for (int i = 0; i <= 1; i++) {
+	for (int i = 0; i <= 1; i++) {
 		auto owner = (i == 0) ? _game->black() : _game->white(); 	
 		_objects.push_back(new PieceObject("./meshes/rook.obj", 
-					owner->piece(Position(i*7, 0))));
+					owner->at(Position(i*7, 0))));
 		_objects.push_back(new PieceObject("./meshes/knight.obj", 
-					owner->piece(Position(i*7, 1))));
+					owner->at(Position(i*7, 1))));
 		_objects.push_back(new PieceObject("./meshes/bishop.obj", 
-					owner->piece(Position(i*7, 2))));
+					owner->at(Position(i*7, 2))));
 		_objects.push_back(new PieceObject("./meshes/king.obj",
-					owner->piece(Position(i*7, 3))));
+					owner->at(Position(i*7, 3))));
 		_objects.push_back(new PieceObject("./meshes/queen.obj",
-					owner->piece(Position(i*7, 4))));
+					owner->at(Position(i*7, 4))));
 		_objects.push_back(new PieceObject("./meshes/bishop.obj", 
-					owner->piece(Position(i*7, 5))));
+					owner->at(Position(i*7, 5))));
 		_objects.push_back(new PieceObject("./meshes/knight.obj", 
-					owner->piece(Position(i*7, 6))));
+					owner->at(Position(i*7, 6))));
 		_objects.push_back(new PieceObject("./meshes/rook.obj",
-					owner->piece(Position(i*7, 7))));
+					owner->at(Position(i*7, 7))));
 
 		for (int j = 0; j <= 7; j++)
 			_objects.push_back(new PieceObject("./meshes/pawn.obj",
-					   owner->piece(Position(i*5+1, j))));	
+					   owner->at(Position(i*5+1, j))));	
 	}
-*/
 }
 
 ChessWindow::~ChessWindow() {

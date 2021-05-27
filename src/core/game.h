@@ -74,6 +74,14 @@ public:
 	 */
 	void back(int times);
 
+  inline Player* black() const {
+		return _black;
+	}
+  
+  inline Player* white() const {
+		return _white;
+	}
+
 	/*!
 	 * Attempts to make the specified move. If the move is valid, this method
 	 * makes the move and returns true; if the move is invalid, this method

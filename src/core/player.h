@@ -54,6 +54,11 @@ private:
 	 * @return Uncaptured piece.
 	 */	
 	Piece* uncapture(const Position& piece);
+  /*!
+	 * Returns true if the position is valid, and false otherwise.
+	 * @return True if valid, false otherwise.
+	 */
+	virtual bool valid(const Position& pos) const;
 	
 protected:
 	/*!
